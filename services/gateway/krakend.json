@@ -1,0 +1,19 @@
+{
+    "version": 3,
+    "name": "API Gateway",
+    "port": 8080,
+    "endpoints": [
+        {
+            "endpoint": "/game",
+            "method": "GET",
+            "output_encoding": "json",
+            "backend": [{
+                "url_pattern": "/",
+                "host": [
+                "http://localhost:8000"
+                ]
+            }]
+        }
+    ]
+}
+  

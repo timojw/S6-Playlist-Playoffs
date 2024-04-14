@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  game:
+    build:
+      context: ./services/game
+    ports:
+      - "8000:8000"
+    restart: on-failure
+
+  # gateway:
+  #   image: devopsfaith/krakend:2.6.1
+  #   ports:
+  #     - "8080:8080" 
+  #   volumes:
+  #     - ./services/gateway/krakend.json:/etc/krakend/krakend.json 
+  #   restart: unless-stopped 
+
+  # web:
+  #   build:
+  #     context: ./web/playlist-playoffs
+  #   ports:
+  #       - "80:80"
+  #   restart: on-failure

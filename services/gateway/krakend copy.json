@@ -1,0 +1,29 @@
+{
+    "version": 3,
+    "name": "API Gateway",
+    "port": 8080,
+    "endpoints": [
+        {
+            "endpoint": "/game",
+            "method": "GET",
+            "output_encoding": "json",
+            "backend": [{
+                "url_pattern": "/",
+                "host": [
+                "http://localhost:8000"
+                ]
+            }],
+            "extra_config": {
+                "github.com/devopsfaith/krakend-jose/validator": {
+                    "alg": "RS256",
+                    "jwk-url": "https://dev-n4quk35t.us.auth0.com/.well-known/jwks.json",
+                    "audience": ["api-gateway-playlist-playoffs"],
+                    "issuer": "https://dev-n4quk35t.us.auth0.com/",
+                    "roles_key": "permissions",
+                    "roles": ["required:Game Leader", "required:Game Player"]
+                }
+            }
+        }
+    ]
+}
+  
