@@ -26,5 +26,5 @@ jobs:
           context: ./services/game
           push: true
           tags: |
-            timojw/S6-Playlist-Playoffs-game-service:latest
-            timojw/S6-Playlist-Playoffs-game-service:${{ github.sha }}
+            timojw/s6-playlist-playoffs-game-service:latest
+            timojw/s6-playlist-playoffs-game-service:${{ github.sha }}
