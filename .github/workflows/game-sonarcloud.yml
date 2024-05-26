@@ -1,0 +1,32 @@
+﻿name: Sonarcloud - game service
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "services/game/**"
+  workflow_dispatch:
+jobs:
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22.1
+      - name: Run tests with coverage for services/game
+        working-directory: services/game
+        run: go test -coverprofile coverage.out ./...
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_GAME }}
+        with:
+          projectBaseDir: services/game

@@ -1,0 +1,80 @@
+{
+    "$schema": "https://www.krakend.io/schema/krakend.json",
+    "version": 3,
+    "name": "PlaylistPlayoffs Gateway",
+    "port": 8080,
+    "cache_ttl": "3600s",
+    "timeout": "3s",
+    "endpoints": [
+      {
+        "endpoint": "/game/getall",
+        "method": "GET",
+        "output_encoding": "no-op",
+        "backend": [
+          {
+            "url_pattern": "/getall",
+            "encoding": "no-op",
+            "sd": "static",
+            "method": "GET",
+            "host": ["http://game:8081"],
+            "disable_host_sanitize": false
+          }
+        ]
+      },
+      {
+        "endpoint": "/game/getbyid/{id}",
+        "method": "GET",
+        "output_encoding": "no-op",
+        "backend": [
+          {
+            "url_pattern": "/getbyid/{id}",
+            "method": "GET",
+            "sd": "static",
+            "host": ["http://game:8081"],
+            "disable_host_sanitize": false
+          }
+        ],
+        "input_query_strings": ["id"]
+      },
+      {
+        "endpoint": "/game/add",
+        "method": "POST",
+        "output_encoding": "no-op",
+        "backend": [
+          {
+            "url_pattern": "/add",
+            "encoding": "json",
+            "sd": "static",
+            "method": "POST",
+            "host": ["http://game:8081"],
+            "disable_host_sanitize": false
+          }
+        ]
+      }
+    ],
+    "extra_config": {
+      "router": {
+        "return_error_msg": true
+      },
+      "telemetry/metrics": {
+        "collection_time": "30s",
+        "listen_address": ":8090"
+      },
+      "telemetry/influx": {
+        "address": "$INFLUX_HOST:$INFLUX_PORT",
+        "ttl": "25s",
+        "buffer_size": 50,
+        "username": "$INFLUX_USER",
+        "password": "$INFLUX_USER_PASSWORD"
+      },
+      "security/cors": {
+        "allow_origins": ["*"],
+        "allow_methods": ["POST", "GET"],
+        "allow_headers": ["Origin", "Authorization", "Content-Type"],
+        "expose_headers": ["Content-Length"],
+        "max_age": "12h"
+      }
+    },
+    "output_encoding": "json"
+  }
+  

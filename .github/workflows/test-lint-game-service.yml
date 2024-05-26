@@ -1,0 +1,46 @@
+﻿name: Test & Lint game-service
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - development
+    paths:
+      - "services/game/**"
+      - ".github/workflows/release-game-service.yml"
+  workflow_dispatch:
+
+jobs:
+  #test building the go project
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/game
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22.1
+      - name: Run tests
+        run: go test ./services/game/...
+
+  golangci-lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22.1
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: v1.54
+          working-directory: services/game
+          args: --timeout 5m

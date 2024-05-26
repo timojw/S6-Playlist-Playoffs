@@ -1,0 +1,62 @@
+version: '2'
+
+networks:
+  kafka-network:
+    driver: bridge
+
+services:
+  # The Kafka cluster
+  kafka:
+    container_name: kafka
+    image: 'bitnami/kafka:latest'
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,PLAINTEXTLOCAL://:9094,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXTLOCAL:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXTLOCAL://localhost:9094
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
+      - KAFKA_CFG_DELETE_TOPICS_ENABLE=false
+    networks:
+      - kafka-network
+    ports:
+      - '9092:9092'
+      - '9093:9093'
+      - '9094:9094'
+    expose:
+      - '9092'
+      - '9093'
+    volumes:
+      - kafka-data:/bitnami/kafka
+  # This services creates the topics in the Kafka cluster, afterwards it will exit
+  kafka-init:
+    image: 'bitnami/kafka:latest'
+    networks:
+      - kafka-network
+    command: ["/bin/bash", "-c", "/create-topics.sh"]
+    depends_on:
+      - kafka
+    volumes:
+      - type: bind
+        source: ./create-topics.sh
+        target: /create-topics.sh
+    init: true
+  
+  # This service is the Kafka UI, accessible at localhost:8080, allows for easy debugging.
+  kafka-ui:
+      container_name: kafka-ui
+      image: provectuslabs/kafka-ui:latest
+      networks:
+        - kafka-network
+      ports:
+        - 8080:8080
+      environment:
+        DYNAMIC_CONFIG_ENABLED: 'false'
+        KAFKA_CLUSTERS_0_NAME: kafka
+        KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+
+volumes:
+  kafka-data:
+    driver: local
