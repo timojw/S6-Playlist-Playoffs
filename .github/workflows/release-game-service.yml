@@ -1,0 +1,30 @@
+﻿name: Release game-service
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "services/game/**"
+      - ".github/workflows/release-game-service.yml"
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+      - name: Build and push game-service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./services/game
+          push: true
+          tags: |
+            timojw/S6-Playlist-Playoffs-game-service:latest
+            timojw/S6-Playlist-Playoffs-game-service:${{ github.sha }}
