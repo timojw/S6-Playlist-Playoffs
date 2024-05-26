@@ -26,13 +26,13 @@ jobs:
           context: ./services/gateway
           push: true
           tags: |
-            timojw/S6-Playlist-Playoffs-gateway:latest
-            timojw/S6-Playlist-Playoffs-gateway:${{ github.sha }}
+            timojw/s6-playlist-playoffs-gateway:latest
+            timojw/s6-playlist-playoffs-gateway:${{ github.sha }}
       - name: Build and push Grafana
         uses: docker/build-push-action@v5
         with:
           context: ./services/gateway/monitoring/grafana
           push: true
           tags: |
-            timojw/S6-Playlist-Playoffs-grafana:latest
-            timojw/S6-Playlist-Playoffs-grafana:${{ github.sha }}
+            timojw/s6-playlist-playoffs-grafana:latest
+            timojw/s6-playlist-playoffs-grafana:${{ github.sha }}
