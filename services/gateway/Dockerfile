@@ -1,8 +1,27 @@
-FROM devopsfaith/krakend:latest
+# KrakenD Gateway Dockerfile
+FROM devopsfaith/krakend:2.6.0
 
-COPY krakend.json /etc/krakend/krakend.json
+# Set environment variables
+ENV INFLUX_HOST=${INFLUX_HOST}
+ENV INFLUX_PORT=${INFLUX_PORT}
+ENV INFLUX_USER=${INFLUX_USER}
+ENV INFLUX_USER_PASSWORD=${INFLUX_USER_PASSWORD}
 
-EXPOSE 8080
+# Copy the configuration file template
+COPY krakend.template.json /etc/krakend/krakend.template.json
 
-ENTRYPOINT ["krakend"]
-CMD ["run", "-c", "/etc/krakend/krakend.json"]
+# Install gettext
+RUN apk --no-cache add gettext
+
+# Create a non-root user
+RUN addgroup -S nonroot \
+    && adduser -S nonroot -G nonroot
+
+# Change the ownership of the /etc/krakend directory to the nonroot user
+RUN chown -R nonroot:nonroot /etc/krakend
+
+# Set the nonroot user
+USER nonroot
+
+# Set the entrypoint to run envsubst and start KrakenD based on the template
+CMD envsubst < /etc/krakend/krakend.template.json > /etc/krakend/krakend.json && krakend run -c /etc/krakend/krakend.json

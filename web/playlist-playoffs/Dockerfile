@@ -1,27 +1,24 @@
 FROM node:latest as build-step
 
-# WORKDIR /playlist-playoffs
+# Set the working directory in the container
+WORKDIR /app
 
-# COPY package.json package-lock.json ./
+COPY package*.json ./
 
-# RUN npm install
+RUN npm install
 
-# COPY . .
+COPY . .
 
-# RUN npm run build
+RUN npm run build -- --output-path=./dist/playlist-playoffs --configuration production --progress=false
 
-# RUN ls -la dist
+FROM nginx:latest
 
-# RUN rm -rf dist
+RUN rm -rf /usr/share/nginx/html/*
 
-# FROM nginx:latest
+COPY --from=build-step /app/dist/playlist-playoffs /usr/share/nginx/html
 
-# COPY --from=build-step /dist/playlist-playoffs /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/nginx.conf
 
-# # COPY --from=build-step /usr/local/playlist-playoffs/dist/playlist-playoffs /usr/share/nginx/html
+EXPOSE 80
 
-# COPY ./nginx.conf /etc/nginx/nginx.conf
-
-# EXPOSE 80
-
-# CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]
