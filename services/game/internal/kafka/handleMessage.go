@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/IBM/sarama"
-	// "gitlab.com/game/internal/models"
+	"github.com/timojw/S6-Playlist-Playoffs/services/game/internal/models"
 	// services "gitlab.com/validation/internal/services"
 )
 
