@@ -7,6 +7,7 @@ on:
     types: [opened, synchronize, reopened]
     paths:
       - "services/gateway/**"
+  workflow_dispatch:
 jobs:
   sonarcloud:
     name: SonarCloud
