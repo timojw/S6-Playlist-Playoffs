@@ -1,0 +1,7 @@
+GAME_HOST=http://host.docker.internal:8081
+AUDIENCE=https://dev-emkd7gpm4ah6eukc.us.auth0.com/api/v2/
+JWK_URL=https://dev-emkd7gpm4ah6eukc.us.auth0.com/.well-known/jwks.json
+INFLUX_HOST=.
+INFLUX_PORT=.
+INFLUX_USER=.
+INFLUX_USER_PASSWORD=.

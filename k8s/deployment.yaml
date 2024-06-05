@@ -34,34 +34,42 @@ spec:
       labels:
         app: kafka
     spec:
-      initContainers:
-      - name: fix-perms
-        image: busybox
-        command: ['sh', '-c', 'chown -R 1001:1001 /bitnami/kafka']
-        volumeMounts:
-        - name: kafka-storage
-          mountPath: /bitnami/kafka
       containers:
       - name: kafka
         image: bitnami/kafka:latest
         ports:
         - containerPort: 9092
         env:
-        - name: KAFKA_CFG_ZOOKEEPER_CONNECT
-          value: "zookeeper-0.zookeeper:2181,zookeeper-1.zookeeper:2181,zookeeper-2.zookeeper:2181"
         - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
           value: "PLAINTEXT:PLAINTEXT"
-        - name: KAFKA_CFG_LISTENERS
+        - name: KAFKA_PROCESS_ROLES
+          value: "broker,controller"
+        - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+          value: "0@kafka-0.kafka:9092,1@kafka-1.kafka:9092,2@kafka-2.kafka:9092"
+        - name: KAFKA_LISTENERS
           value: "PLAINTEXT://0.0.0.0:9092"
-        - name: KAFKA_CFG_ADVERTISED_LISTENERS
+        - name: KAFKA_ADVERTISED_LISTENERS
           value: "PLAINTEXT://$(MY_POD_IP):9092"
+        - name: KAFKA_CFG_CONTROLLER_LISTENER_NAMES
+          value: "PLAINTEXT"
         - name: MY_POD_IP
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+        - name: KAFKA_CFG_NODE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        command: ['/bin/sh', '-c', 'export KAFKA_CFG_NODE_ID=$(hostname | grep -o "[0-9]+$") && exec /opt/bitnami/scripts/kafka/run.sh']
         volumeMounts:
         - name: kafka-storage
           mountPath: /bitnami/kafka
+        - name: config-volume
+          mountPath: /opt/bitnami/kafka/config
+      volumes:  # This should be at the same level as containers
+      - name: config-volume
+        configMap:
+          name: kafka-config
   volumeClaimTemplates:
   - metadata:
       name: kafka-storage
@@ -72,45 +80,55 @@ spec:
           storage: 10Gi
 
 
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: kafka
-# spec:
-#   replicas: 3
-#   selector:
-#     matchLabels:
-#       app: kafka
-#   template:
-#     metadata:
-#       labels:
-#         app: kafka
-#     spec:
-#       hostname: kafka
-#       subdomain: kafka-headless
-#       containers:
-#       - name: kafka
-#         image: bitnami/kafka:latest
-#         ports:
-#         - containerPort: 9092
-#         env:
-#         - name: KAFKA_CFG_ZOOKEEPER_CONNECT
-#           value: "zookeeper-0.zookeeper:2181,zookeeper-1.zookeeper:2181,zookeeper-2.zookeeper:2181"
-#         - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
-#           value: "PLAINTEXT:PLAINTEXT"
-#         - name: KAFKA_CFG_LISTENERS
-#           value: "PLAINTEXT://0.0.0.0:9092"
-#         - name: KAFKA_CFG_ADVERTISED_LISTENERS
-#           value: "PLAINTEXT://kafka-0.kafka-headless.default.svc.cluster.local:9092"
-#         volumeMounts:
-#         - name: kafka-storage
-#           mountPath: /bitnami/kafka
-#       volumes:
-#       - name: kafka-storage
-#         persistentVolumeClaim:
-#           claimName: kafka-pvc-new
+---
 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-config
+data:
+  server.properties: |
+    process.roles=broker,controller
+    controller.quorum.voters=0@kafka-0.kafka:9092,1@kafka-1.kafka:9092,2@kafka-2.kafka:9092
+    listeners=PLAINTEXT://:9092
+    advertised.listeners=PLAINTEXT://$(MY_POD_IP):9092
+    num.network.threads=3
+    num.io.threads=8
+    socket.send.buffer.bytes=102400
+    socket.receive.buffer.bytes=102400
+    socket.request.max.bytes=104857600
+    num.partitions=1
+    log.dirs=/var/lib/kafka/data
+    log.retention.hours=168
+    log.segment.bytes=1073741824
+    log.retention.check.interval.ms=300000
+  # log4j.properties: |
+  #   # Log4j configuration settings
+  #   log4j.rootLogger=INFO, stdout
+  #   log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+  #   log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+  #   log4j.appender.stdout.layout.ConversionPattern=[%d] %p %m (%c)%n
 
+---
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: angular-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: angular-app
+  template:
+    metadata:
+      labels:
+        app: angular-app
+    spec:
+      containers:
+      - name: angular-app
+        image: playlistplayoffsregistry.azurecr.io/playlist-playoffs:latest
+        ports:
+        - containerPort: 80
 
 

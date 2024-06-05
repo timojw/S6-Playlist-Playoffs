@@ -17,7 +17,7 @@ COPY --from=builder /app/ /app/
 RUN mv /app/services/game/game-service /app/services
 
 # Expose the port
-EXPOSE 6000
+EXPOSE 8081
 
 # Run the binary
 CMD ["services/game-service"]

@@ -1,0 +1,63 @@
+{
+    "version": 3,
+    "name": "Playlist Playoffs API Gateway",
+    "port": 8080,
+    "cache_ttl": "3600s",
+    "timeout": "10s",
+    "endpoints": [
+        {
+            "endpoint": "/api/game/add",
+            "method": "POST",
+            "timeout": "15s",
+            "output_encoding": "json",
+            "backend": [
+                {
+                    "url_pattern": "/game",
+                    "encoding": "json",
+                    "sd": "static",
+                    "method": "POST",
+                    "extra_config": {
+                        "qos/circuit-breaker": {
+                        "interval": 60,
+                        "name": "component-circuit-breaker",
+                        "timeout": 10,
+                        "max_errors": 3,
+                        "log_status_change": true
+                        }
+                    },
+                    "host": ["$GAME_HOST"],
+                    "disable_host_sanitize": false
+                }
+            ]
+        }
+    ],
+    "extra_config": {
+        "telemetry/metrics": {
+            "collection_time": "30s",
+            "listen_address": ":8090"
+        },
+        "qos/ratelimit/router": {
+            "max_rate": 50,
+            "capacity": 50,
+            "client_max_rate": 5,
+            "client_capacity": 5,
+            "every": "10m",
+            "strategy": "ip"
+        },
+        "security/bot-detector": {
+            "cache_size": 10000,
+            "empty_user_agent_is_bot": true
+        },
+        "security/cors": {
+            "allow_origins": ["http://localhost:4200", "http://localhost"],
+            "allow_methods": ["POST", "GET"],
+            "allow_headers": ["Origin", "Authorization", "Content-Type"],
+            "expose_headers": ["Content-Length"],
+            "max_age": "12h"
+        },
+        "auth/validator": {
+            "shared_cache_duration": 3600
+        }
+    },
+    "output_encoding": "json"
+}

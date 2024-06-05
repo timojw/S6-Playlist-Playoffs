@@ -1,0 +1,48 @@
+﻿name: SonarCloud-frontend
+on:
+  push:
+    paths:
+      - 'apps/frontend/**'
+jobs:
+  SonarCloud-frontend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      # Setup pnpm
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - run: go version
+      # Setup nodejs
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+      # Install dependencies
+      - name: Install dependencies
+        run: pnpm install
+      - name: Install nx
+        run: pnpm install -g nx
+      - name: Run tests
+        run: nx test web --code-coverage
+      - name: fix code coverage paths
+        working-directory: ./apps/web/coverage/web
+        run: |
+          sed -i 's/apps\/web\///g' lcov.info
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: apps/web
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_WEB }}
