@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-create-game-form',
@@ -40,10 +41,13 @@ export class CreateGameFormComponent {
       deadline: this.gameDeadline
     };
 
-    this.http.post('http://localhost:8080/api/game/add', postData).subscribe({
-      next: (response) => console.log(response),
+    // Log the request data to the console
+    console.log('Sending POST request to API:', `${environment.apiUrl}/api/game/add`);
+    console.log('Request data:', postData);
+
+    this.http.post(`http://localhost:8080/api/game/add`, postData).subscribe({
+      next: (response) => console.log('Response from API:', response),
       error: (error) => console.error('There was an error!', error)
     });
-
   }
 }

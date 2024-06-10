@@ -13,8 +13,10 @@ const { domain, clientId, authorizationParams: { audience }, apiUri, errorPath }
   errorPath: string;
 };
 
+
 export const environment = {
   production: false,
+  apiUrl: 'http://localhost:8080',
   auth: {
     domain,
     clientId,
@@ -28,6 +30,8 @@ export const environment = {
     allowedList: [`${apiUri}/*`],
   },
 };
+
+console.log('Environment config:', environment);
 
 /*
  * For easier debugging in development mode, you can import the following file

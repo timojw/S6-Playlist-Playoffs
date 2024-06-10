@@ -1,3 +1,4 @@
+# Stage 1: Build the Angular application
 FROM node:18-alpine AS build
 RUN apk update && apk add git
 RUN mkdir -p /app
@@ -10,22 +11,14 @@ RUN npm install --legacy-peer-deps
 COPY . .
 RUN npm run build
 
-ENV API_URL ${API_URL}
+FROM nginx:alpine
 
-FROM node:18-alpine
-RUN mkdir -p /app
-WORKDIR /app
-COPY package.json .
-COPY package-lock.json .
-RUN npm install --production --legacy-peer-deps
-COPY --from=build ./app/dist/login-demo ./dist
-COPY ./server.js .
-COPY ./api-server.js .
-COPY ./auth_config.json .
-ENV NODE_ENV=production
-ENV SERVER_PORT=3000
-ENV API_SERVER_PORT=3001
-EXPOSE 3000
-EXPOSE 3001
+COPY --from=build /app/dist/login-demo /usr/share/nginx/html
+COPY nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
+COPY certs/tls.crt /etc/tls/tls.crt
+COPY certs/tls.key /etc/tls/tls.key
 
-CMD ["npm", "run", "prod"]
+EXPOSE 80 443
+
+CMD ["nginx", "-g", "daemon off;"]
+

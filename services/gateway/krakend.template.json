@@ -5,60 +5,95 @@
   "cache_ttl": "3600s",
   "timeout": "10s",
   "endpoints": [
-      {
-          "endpoint": "/api/game/add",
+    {
+      "endpoint": "/api/game/add",
+      "method": "POST",
+      "timeout": "15s",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/game",
+          "encoding": "json",
+          "sd": "static",
           "method": "POST",
-          "timeout": "15s",
-          "output_encoding": "json",
-          "backend": [
-              {
-                  "url_pattern": "/game",
-                  "encoding": "json",
-                  "sd": "static",
-                  "method": "POST",
-                  "extra_config": {
-                      "qos/circuit-breaker": {
-                      "interval": 60,
-                      "name": "component-circuit-breaker",
-                      "timeout": 10,
-                      "max_errors": 3,
-                      "log_status_change": true
-                      }
-                  },
-                  "host": ["$GAME_HOST"],
-                  "disable_host_sanitize": false
-              }
-          ]
-      }
+          "host": ["http://game-service:8081"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/game/{id}",
+      "method": "GET",
+      "timeout": "15s",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/game/{id}",
+          "encoding": "json",
+          "sd": "static",
+          "method": "GET",
+          "host": ["http://game-service:8081"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/votes",
+      "method": "POST",
+      "timeout": "15s",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/votes",
+          "encoding": "json",
+          "sd": "static",
+          "method": "POST",
+          "host": ["http://voting-service:8082"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/votes/{game_id}",
+      "method": "GET",
+      "timeout": "15s",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/votes/{game_id}",
+          "encoding": "json",
+          "sd": "static",
+          "method": "GET",
+          "host": ["http://voting-service:8082"]
+        }
+      ]
+    }
   ],
   "extra_config": {
-      "telemetry/metrics": {
-          "collection_time": "30s",
-          "listen_address": ":8090"
-      },
-      "qos/ratelimit/router": {
-          "max_rate": 50,
-          "capacity": 50,
-          "client_max_rate": 5,
-          "client_capacity": 5,
-          "every": "10m",
-          "strategy": "ip"
-      },
-      "security/bot-detector": {
-          "cache_size": 10000,
-          "empty_user_agent_is_bot": true
-      },
-      "security/cors": {
-          "allow_origins": ["http://localhost:4200", "http://localhost"],
-          "allow_methods": ["POST", "GET", "OPTIONS"],
-          "allow_headers": ["Origin", "Authorization", "Content-Type", "Accept"],
-          "expose_headers": ["Content-Length"],
-          "max_age": "12h",
-          "allow_credentials": true
-      },
-      "auth/validator": {
-          "shared_cache_duration": 3600
-      }
+    "telemetry/metrics": {
+      "collection_time": "30s",
+      "listen_address": ":8090"
+    },
+    "qos/ratelimit/router": {
+      "max_rate": 50,
+      "capacity": 50,
+      "client_max_rate": 5,
+      "client_capacity": 5,
+      "every": "10m",
+      "strategy": "ip"
+    },
+    "security/bot-detector": {
+      "cache_size": 10000,
+      "empty_user_agent_is_bot": true
+    },
+    "security/cors": {
+      "allow_origins": ["http://localhost:4200", "http://localhost:3000"],
+      "allow_methods": ["POST", "GET", "OPTIONS"],
+      "allow_headers": ["Origin", "Authorization", "Content-Type", "Accept"],
+      "expose_headers": ["Content-Length"],
+      "max_age": "12h",
+      "allow_credentials": true
+    },
+    "auth/validator": {
+      "shared_cache_duration": 3600
+    }
   },
   "output_encoding": "json"
 }

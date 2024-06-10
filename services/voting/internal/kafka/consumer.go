@@ -11,30 +11,25 @@ import (
 )
 
 func RunConsumer() {
-	// Set up configuration
 	config := sarama.NewConfig()
 	config.Consumer.Return.Errors = true
 	config.Consumer.Offsets.AutoCommit.Enable = false
 
 	var brokers = []string{os.Getenv("KAFKA_BOOTSTRAP_SERVER")}
-	var consumerGroupId = "ValidationService"
-	// Create consumer group
-	consumerGroup, err := setupConsumerGroup(brokers, consumerGroupId, config)
+	var consumerGroupId = "VotesServiceGroup"
 
+	consumerGroup, err := setupConsumerGroup(brokers, consumerGroupId, config)
 	if err != nil {
 		log.Panicf("Error setting up consumer: %v", err)
 	}
 
 	consumer := Consumer{}
 	ctx := context.Background()
-
-	// Set topic name to listen to
 	var topicName = "Votes_Added"
 
 	println("Listening to topic:", topicName)
 
 	for {
-		// Consume the consumer group and set the handler for the consumer group
 		err := consumerGroup.Consume(ctx, []string{topicName}, &consumer)
 		if err != nil {
 			log.Printf("Error from consumer: %v", err)
@@ -45,26 +40,22 @@ func RunConsumer() {
 	}
 }
 
-// define the consumer
 type Consumer struct{}
 
 func (consumer Consumer) Setup(_ sarama.ConsumerGroupSession) error   { return nil }
 func (consumer Consumer) Cleanup(_ sarama.ConsumerGroupSession) error { return nil }
 func (consumer Consumer) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for msg := range claim.Messages() {
-		// process the message
 		fmt.Printf("Message topic:%q partition:%d offset:%d value:%s\n", msg.Topic, msg.Partition, msg.Offset, string(msg.Value))
 
 		switch msg.Topic {
-		case "Extraction_Complete":
+		case "Votes_Added":
 			handleMessage(*msg)
 		default:
 			fmt.Println("Unknown topic:", msg.Topic)
 		}
 
-		// after processing the message, mark the offset
 		sess.MarkMessage(msg, "")
-
 		sess.Commit()
 	}
 	return nil
