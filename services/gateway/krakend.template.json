@@ -83,6 +83,13 @@
       "cache_size": 10000,
       "empty_user_agent_is_bot": true
     },
+    "telemetry/influx": {
+      "address": "$INFLUXDB_HOST:$INFLUXDB_PORT",
+      "ttl": "25s",
+      "buffer_size": 100,
+      "username": "$INFLUXDB_USER",
+      "password": "$INFLUXDB_USER_PASSWORD"
+    },
     "security/cors": {
       "allow_origins": ["http://localhost:4200", "http://localhost:3000"],
       "allow_methods": ["POST", "GET", "OPTIONS"],

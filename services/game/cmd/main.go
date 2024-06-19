@@ -4,13 +4,11 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"os"
-	"time"
-
-	"github.com/timojw/S6-Playlist-Playoffs/services/game/internal/kafka"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/timojw/S6-Playlist-Playoffs/services/game/internal/kafka"
 )
 
 type Game struct {
@@ -35,7 +33,7 @@ func addGameHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//id generate
+	// id generate
 	game.ID = uuid.New().String()
 	games[game.ID] = game
 
@@ -53,18 +51,21 @@ func getGameHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	gameID, err := strconv.Atoi(id)
+	if err != nil {
+		http.Error(w, "Invalid Game ID", http.StatusBadRequest)
+		return
+	}
+
+	kafka.RunProducer(gameID, true)
+
 	json.NewEncoder(w).Encode(game)
 }
 
 func main() {
-	if os.Getenv("KAFKA_BOOTSTRAP_SERVER") == "" {
-		os.Setenv("KAFKA_BOOTSTRAP_SERVER", "kafka:9092")
-	}
-
-	kafka.RunProducer(`{"message": "Hello, World!"}`)
-
-	// Give the message some time to be sent
-	time.Sleep(5 * time.Second)
+	// if os.Getenv("KAFKA_BOOTSTRAP_SERVER") == "" {
+	// 	os.Setenv("KAFKA_BOOTSTRAP_SERVER", "kafka:9092")
+	// }
 
 	r := mux.NewRouter()
 	r.HandleFunc("/game", addGameHandler).Methods("POST")

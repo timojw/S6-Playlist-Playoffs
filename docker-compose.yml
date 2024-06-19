@@ -7,7 +7,7 @@ networks:
 services:
   kafka:
     container_name: kafka
-    image: "bitnami/kafka:latest"
+    image: 'bitnami/kafka:latest'
     environment:
       - KAFKA_CFG_NODE_ID=0
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
@@ -21,25 +21,40 @@ services:
     networks:
       - pp-network
     ports:
-      - "9092:9092"
-      - "9093:9093"
-      - "9094:9094"
+      - '9092:9092'
+      - '9093:9093'
+      - '9094:9094'
     expose:
-      - "9092"
-      - "9093"
-      - "9094"
+      - '9092'
+      - '9093'
     volumes:
       - kafka-data:/bitnami/kafka
 
+  # This services creates the topics in the Kafka cluster, afterwards it will exit
+  kafka-init:
+    container_name: kafka-init
+    image: 'bitnami/kafka:latest'
+    networks:
+      - pp-network
+    command: ['/bin/bash', '-c', '/create-topics.sh']
+    depends_on:
+      - kafka
+    volumes:
+      - type: bind
+        source: ./create-topics.sh
+        target: /create-topics.sh
+    init: true
+
+  # This service is the Kafka UI, accessible at localhost:8090, allows for easy debugging.
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
     networks:
       - pp-network
     ports:
-      - "9090:9090"
+      - '8090:8080'
     environment:
-      DYNAMIC_CONFIG_ENABLED: "false"
+      DYNAMIC_CONFIG_ENABLED: 'false'
       KAFKA_CLUSTERS_0_NAME: kafka
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
 
@@ -52,6 +67,8 @@ services:
     build:
       context: .
       dockerfile: services/game/Dockerfile
+    environment:
+      KAFKA_BOOTSTRAP_SERVER: kafka:9092
     networks:
       - pp-network
     env_file: services/game/.env
@@ -67,24 +84,14 @@ services:
     build:
       context: .
       dockerfile: services/voting/Dockerfile
+    environment:
+      KAFKA_BOOTSTRAP_SERVER: kafka:9092
     networks:
       - pp-network
     env_file: services/voting/.env
     ports:
       - "8082:8082"
 
-  krakend:
-    container_name: krakend
-    build:
-      context: ./services/gateway
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      - AUDIENCE=https://dev-emkd7gpm4ah6eukc.us.auth0.com/api/v2/
-      - GAME_HOST=http://game-service:8081
-    networks:
-      - pp-network
 
   web:
     container_name: web
@@ -101,6 +108,52 @@ services:
     networks:
       - pp-network
     restart: on-failure
+
+  krakend:
+    container_name: krakend
+    build:
+      context: ./services/gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - AUDIENCE=https://dev-emkd7gpm4ah6eukc.us.auth0.com/api/v2/
+      - GAME_HOST=http://game-service:8081
+      - INFLUXDB_HOST=${INFLUXDB_HOST}
+      - INFLUXDB_PORT=${INFLUXDB_PORT}
+      - INFLUXDB_USER=${INFLUXDB_USER}
+      - INFLUXDB_USER_PASSWORD=${INFLUXDB_USER_PASSWORD}
+    networks:
+      - pp-network
+
+  grafana:
+    container_name: grafana
+    build:
+      context: ./services/gateway/monitoring/grafana
+      dockerfile: Dockerfile
+    ports:
+      - '4000:3000'
+    environment:
+      - INFLUXDB_HOST=${INFLUXDB_HOST}
+      - INFLUXDB_PORT=${INFLUXDB_PORT}
+      - INFLUXDB_USER=${INFLUXDB_USER}
+      - INFLUXDB_USER_PASSWORD=${INFLUXDB_USER_PASSWORD}
+    networks:
+      - pp-network
+
+  influxdb:
+    container_name: influxdb
+    image: influxdb:1.8.10
+    environment:
+      - INFLUXDB_DB=krakend
+      - INFLUXDB_USER=${INFLUXDB_USER}
+      - INFLUXDB_USER_PASSWORD=${INFLUXDB_USER_PASSWORD}
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin_password
+    ports:
+      - '8086:8086'
+    networks:
+      - pp-network
 
 volumes:
   kafka-data:

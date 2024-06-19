@@ -1,0 +1,16 @@
+apiVersion: v1
+data:
+  create-topics.sh: |
+    #/bin/bash
+
+    /opt/bitnami/kafka/bin/kafka-topics.sh --create --topic GET_VOTES --partitions 1 --replication-factor 1 --bootstrap-server kafka:9092
+
+
+    echo "Topics are created"
+kind: ConfigMap
+metadata:
+  annotations:
+    use-subpath: "true"
+  labels:
+    io.kompose.service: kafka-init
+  name: kafka-init-cm0

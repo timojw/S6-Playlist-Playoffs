@@ -1,13 +1,14 @@
 package kafka
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 
 	"github.com/IBM/sarama"
 )
 
-func RunProducer(message string) {
+func RunProducer(gameID int, getVotes bool) {
 	config := sarama.NewConfig()
 	config.Producer.Return.Successes = true
 	config.Producer.Return.Errors = true
@@ -16,22 +17,27 @@ func RunProducer(message string) {
 	if err != nil {
 		log.Panicf("Failed to start Sarama producer: %v", err)
 	}
-	defer func() {
-		if err := producer.Close(); err != nil {
-			log.Panicf("Failed to close Sarama producer: %v", err)
-		}
-	}()
+	defer producer.Close()
 
-	topic := "Votes_Added"
+	message := map[string]interface{}{
+		"GameID":   gameID,
+		"GetVotes": getVotes,
+	}
+	messageBytes, err := json.Marshal(message)
+	if err != nil {
+		log.Panicf("Failed to marshal message: %v", err)
+	}
+
+	topic := "GET_VOTES"
 	msg := &sarama.ProducerMessage{
 		Topic: topic,
-		Value: sarama.StringEncoder(message),
+		Value: sarama.ByteEncoder(messageBytes),
 	}
 
 	partition, offset, err := producer.SendMessage(msg)
 	if err != nil {
 		log.Panicf("Failed to send message to Kafka: %v", err)
 	} else {
-		log.Printf("Message sent to topic %s, partition %d, offset %d\n", topic, partition, offset)
+		log.Printf("Message sent to topic %s, partition %d, offset %d", topic, partition, offset)
 	}
 }

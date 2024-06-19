@@ -20,6 +20,27 @@ spec:
 
 ---
 apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voting-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: voting-service
+  template:
+    metadata:
+      labels:
+        app: voting-service
+    spec:
+      containers:
+      - name: voting-service
+        image: playlistplayoffsregistry.azurecr.io/voting-service:latest
+        ports:
+        - containerPort: 6000
+
+---
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: kafka

@@ -25,7 +25,7 @@ func RunConsumer() {
 
 	consumer := Consumer{}
 	ctx := context.Background()
-	var topicName = "Votes_Added"
+	var topicName = "GET_VOTES"
 
 	println("Listening to topic:", topicName)
 
@@ -49,7 +49,7 @@ func (consumer Consumer) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sa
 		fmt.Printf("Message topic:%q partition:%d offset:%d value:%s\n", msg.Topic, msg.Partition, msg.Offset, string(msg.Value))
 
 		switch msg.Topic {
-		case "Votes_Added":
+		case "GET_VOTES":
 			handleMessage(*msg)
 		default:
 			fmt.Println("Unknown topic:", msg.Topic)
