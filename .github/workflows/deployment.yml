@@ -1,54 +1,60 @@
 name: Deployment
-
+# run on every push
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
 
 jobs:
-  build-and-push:
+  dockerhub-release:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [game-service, voting-service, gateway, web]
-
+        node-version: [20]
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Cache Docker layers
-        uses: actions/cache@v2
+      # Setup pnpm
+      - uses: pnpm/action-setup@v4
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+          version: 8
+      - uses: actions/setup-go@v5
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
-
-      - name: Build and push Docker images
+          go-version: '1.22'
+      - run: go version
+      # Setup nodejs
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+      # Install dependencies
+      - name: Install dependencies
+        run: pnpm install
+      - name: Install nx
+        run: pnpm install -g nx
+      # Get the name of the application from the tag
+      - name: Get application name from tag
+        id: get_tag
         run: |
-          docker buildx build --push \
-          --tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:latest \
-          --cache-to=type=inline \
-          --cache-from=type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:cache \
-          ./services/${{ matrix.service }}
+          TAG_NAME=$(echo "${{ github.ref }}" | awk -F'/' '{print $3}')
+          APP_NAME=$(echo "${TAG_NAME}" | awk -F'-' '{for (i=1; i<NF; i++) printf $i "-"}')
+          APP_NAME=$(echo "$APP_NAME" | sed 's/-$//')
+          echo "::set-output name=app_name::${APP_NAME}"
+      - name: Build application
+        run: nx build "${{ steps.get_tag.outputs.app_name }}"
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Dockerhub application
+        run: nx docker "${{ steps.get_tag.outputs.app_name }}"
 
   deploy:
-    needs: build-and-push
+    needs: dockerhub-release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up Azure CLI
         uses: azure/login@v1
@@ -65,13 +71,14 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Apply Kubernetes manifests
+      - name: Get application name from tag
+        id: get_tag
         run: |
-          kubectl apply -f k8s/ --validate=false
+          TAG_NAME=$(echo "${{ github.ref }}" | awk -F'/' '{print $3}')
+          APP_NAME=$(echo "${TAG_NAME}" | awk -F'-' '{for (i=1; i<NF; i++) printf $i "-"}')
+          APP_NAME=$(echo "$APP_NAME" | sed 's/-$//')
+          echo "::set-output name=app_name::${APP_NAME}"
 
-      - name: Restart deployments
+      - name: Deploy to AKS
         run: |
-          kubectl rollout restart deployment/game-service
-          kubectl rollout restart deployment/voting-service
-          kubectl rollout restart deployment/gateway
-          kubectl rollout restart deployment/web
+          kubectl rollout restart deployment/${{ steps.get_tag.outputs.app_name }}
