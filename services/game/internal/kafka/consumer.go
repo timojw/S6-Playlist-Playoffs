@@ -29,7 +29,7 @@ func RunConsumer() {
 	ctx := context.Background()
 
 	// Set topic name to listen to
-	var topicName = "Extraction_Complete"
+	var topicName = "Votes_Added"
 
 	println("Listening to topic:", topicName)
 

@@ -1,0 +1,77 @@
+name: Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [game-service, voting-service, gateway, web]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_ACCESSTOKEN }}
+
+      - name: Build and push Docker images
+        run: |
+          docker buildx build --push \
+          --tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:latest \
+          --cache-to=type=inline \
+          --cache-from=type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:cache \
+          ./services/${{ matrix.service }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Azure CLI
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Azure CLI - Get AKS credentials
+        run: |
+          az account set --subscription ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          az aks get-credentials --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AKS_CLUSTER_NAME }}
+
+      - name: Set up Kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f k8s/ --validate=false
+
+      - name: Restart deployments
+        run: |
+          kubectl rollout restart deployment/game-service
+          kubectl rollout restart deployment/voting-service
+          kubectl rollout restart deployment/gateway
+          kubectl rollout restart deployment/web

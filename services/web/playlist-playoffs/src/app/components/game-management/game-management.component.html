@@ -1,0 +1,21 @@
+<div *ngIf="game">
+    <h1>Manage Game: {{ game.name }}</h1>
+    <p>ID: {{ game.id }}</p>
+    <p>Deadline: {{ game.deadline }}</p>
+  
+    <h2>Songs</h2>
+    <div cdkDropList (cdkDropListDropped)="drop($event)">
+      <div *ngFor="let song of songs" cdkDrag>
+        <p>{{ song.title }} by {{ song.artist }} - Points: {{ song.points }}</p>
+      </div>
+    </div>
+  
+    <button (click)="saveVotes()">Save Votes</button>
+  </div>
+  <div *ngIf="error">
+    <p>{{ error }}</p>
+  </div>
+  <div *ngIf="!game && !error">
+    <p>Loading game details...</p>
+  </div>
+  

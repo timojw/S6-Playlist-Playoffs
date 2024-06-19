@@ -1,0 +1,24 @@
+.song-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .song-points {
+    width: 50px;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .song-details {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .song-details p {
+    margin: 0;
+  }
+  

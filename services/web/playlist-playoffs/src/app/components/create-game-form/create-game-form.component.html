@@ -1,0 +1,14 @@
+<div class="container">
+    <form (ngSubmit)="startGame()">
+        <div>
+            <label for="name">Game Name:</label>
+            <input type="text" id="name" [(ngModel)]="gameName" name="gameName" required>
+        </div>
+        <div>
+            <label for="deadline">Deadline Date:</label>
+            <input type="date" id="deadline" [min]="minDate" (change)="onDateChange($event.target.value)" required>
+        </div>
+        <button type="submit">Start Game</button>
+    </form>
+</div>
+  

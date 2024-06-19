@@ -1,0 +1,67 @@
+﻿name: Development
+# run on every push
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build-test-tag:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      # Setup pnpm
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - run: go version
+      - name: Set Git identity
+        run: |
+          git config --global user.name "GitHub Actions Versioning"
+          git config --global user.email "versioning@version.com"
+          git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/timojw/S6-Playlist-Playoffs.git
+      # Setup nodejs
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+      # Install dependencies
+      - name: Install dependencies
+        run: pnpm install
+      - name: Install nx
+        run: pnpm install -g nx
+
+      # Check linting
+      - name: Lint applications
+        run: pnpm run lint:affected
+
+      # Check if application builds
+      - name: Build applications
+        run: pnpm run build:affected
+
+      # Run tests
+      - name: Run tests
+        run: pnpm run test:affected
+
+      - name: Semantic versioning
+        run: pnpm run version:affected
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+      - name: Tag last-release
+        shell: bash
+        run: |
+          git tag -f last-release
+          git push origin last-release --force
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
