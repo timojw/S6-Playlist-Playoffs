@@ -82,7 +82,7 @@ jobs:
 
       - name: Debug app name
         run: | 
-          echo "App name: ${{ steps.get_tag.outputs.app_name }}"
+          TAG_NAME=$(echo "refs/heads/main" | awk -F'/' 'print $4')
         
       - name: Deploy to AKS
         run: |
