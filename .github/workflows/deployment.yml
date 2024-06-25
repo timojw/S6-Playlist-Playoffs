@@ -80,6 +80,10 @@ jobs:
           APP_NAME=$(echo "$APP_NAME" | sed 's/-$//')
           echo "::set-output name=app_name::${APP_NAME}"
 
+      - name: Debug app name
+        run: | 
+          echo "App name: ${{ steps.get_tag.outputs.app_name }}"
+        
       - name: Deploy to AKS
         run: |
           kubectl rollout restart deployment/${{ steps.get_tag.outputs.app_name }}
