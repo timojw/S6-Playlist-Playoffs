@@ -27,7 +27,7 @@ spec:
                 configMapKeyRef:
                   key: KAFKA_BOOTSTRAP_SERVER
                   name: voting-service-env
-          image: playlistplayoffsregistry.azurecr.io/voting-service:latest
+          image: timojw/voting:1
           name: voting-service
           ports:
             - containerPort: 8082

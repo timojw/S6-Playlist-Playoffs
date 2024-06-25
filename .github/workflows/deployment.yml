@@ -3,6 +3,7 @@ name: Deployment
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   dockerhub-release:
@@ -45,7 +46,7 @@ jobs:
       - name: Build application
         run: nx build "${{ steps.get_tag.outputs.app_name }}"
       - name: Docker login
-        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
       - name: Dockerhub application
         run: nx docker "${{ steps.get_tag.outputs.app_name }}"
 

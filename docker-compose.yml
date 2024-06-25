@@ -58,11 +58,11 @@ services:
       KAFKA_CLUSTERS_0_NAME: kafka
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
 
-  game-service:
+  game:
     depends_on:
       - kafka
       - kafka-ui
-    container_name: game-service
+    container_name: game
     image: game-service:latest
     build:
       context: .
@@ -75,11 +75,11 @@ services:
     ports:
       - "8081:8081"
 
-  voting-service:
+  voting:
     depends_on:
       - kafka
       - kafka-ui
-    container_name: voting-service
+    container_name: voting
     image: voting-service:latest
     build:
       context: .

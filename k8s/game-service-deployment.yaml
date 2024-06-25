@@ -27,7 +27,7 @@ spec:
                 configMapKeyRef:
                   key: KAFKA_BOOTSTRAP_SERVER
                   name: game-service-env
-          image: game-service:latest
+          image: timojw/game:1
           name: game-service
           ports:
             - containerPort: 8081
