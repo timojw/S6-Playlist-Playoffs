@@ -64,25 +64,19 @@ jobs:
 
       - name: Deploy to AKS
         run: |
-          case "${{ matrix.service-name }}" in
-            game)
-              kubectl set image deployment/game-service game=timojw/game:${{ github.sha }}
-              kubectl rollout restart deployment/game-service
-              ;;
-            voting)
-              kubectl set image deployment/voting-service voting=timojw/voting:${{ github.sha }}
-              kubectl rollout restart deployment/voting-service
-              ;;
-            krakend)
-              kubectl set image deployment/krakend krakend=timojw/krakend:${{ github.sha }}
-              kubectl rollout restart deployment/krakend
-              ;;
-            grafana)
-              kubectl set image deployment/grafana grafana=timojw/grafana:${{ github.sha }}
-              kubectl rollout restart deployment/grafana
-              ;;
-            web)
-              kubectl set image deployment/web web=timojw/web:${{ github.sha }}
-              kubectl rollout restart deployment/web
-              ;;
-          esac
+          if [[ "${{ matrix.service-name }}" == "game" ]]; then
+            kubectl set image deployment/game-service game-service=timojw/game:${{ github.sha }}
+            kubectl rollout restart deployment/game-service
+          elif [[ "${{ matrix.service-name }}" == "voting" ]]; then
+            kubectl set image deployment/voting-service voting-service=timojw/voting:${{ github.sha }}
+            kubectl rollout restart deployment/voting-service
+          elif [[ "${{ matrix.service-name }}" == "krakend" ]]; then
+            kubectl set image deployment/krakend krakend=timojw/krakend:${{ github.sha }}
+            kubectl rollout restart deployment/krakend
+          elif [[ "${{ matrix.service-name }}" == "grafana" ]]; then
+            kubectl set image deployment/grafana grafana=timojw/grafana:${{ github.sha }}
+            kubectl rollout restart deployment/grafana
+          elif [[ "${{ matrix.service-name }}" == "web" ]]; then
+            kubectl set image deployment/web web=timojw/web:${{ github.sha }}
+            kubectl rollout restart deployment/web
+          fi
