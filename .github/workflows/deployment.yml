@@ -64,5 +64,13 @@ jobs:
 
       - name: Deploy to AKS
         run: |
-          kubectl set image deployment/${{ matrix.service-name }} ${{ matrix.service-name }}=timojw/${{ matrix.service-name }}:${{ github.sha }} --record
-          kubectl rollout restart deployment/${{ matrix.service-name }}
+          if [[ "${{ matrix.service-name }}" == "game" ]]; then
+            kubectl set image deployment/game-service game=timojw/game:${{ github.sha }}
+            kubectl rollout restart deployment/game-service
+          elif [[ "${{ matrix.service-name }}" == "voting" ]]; then
+            kubectl set image deployment/voting-service voting=timojw/voting:${{ github.sha }}
+            kubectl rollout restart deployment/voting-service
+          else
+            kubectl set image deployment/${{ matrix.service-name }} ${{ matrix.service-name }}=timojw/${{ matrix.service-name }}:${{ github.sha }}
+            kubectl rollout restart deployment/${{ matrix.service-name }}
+          fi
