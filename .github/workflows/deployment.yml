@@ -86,4 +86,4 @@ jobs:
         
       - name: Deploy to AKS
         run: |
-          kubectl rollout restart deployment/pp1
+          kubectl rollout restart deployment/${{ steps.get_tag.outputs.app_name }}

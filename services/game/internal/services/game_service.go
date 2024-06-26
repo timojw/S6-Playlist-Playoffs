@@ -1,4 +1,3 @@
-// Package services is the business layer between the controllers and the repositories, and it contains the business logic for the application
 package services
 
 import (
@@ -6,11 +5,15 @@ import (
 	"github.com/timojw/S6-Playlist-Playoffs/services/game/internal/repositories"
 )
 
-type GameService struct{}
+type GameService struct {
+	repo repositories.GameRepository
+}
 
-var gameRepository repositories.GameRepository
+func NewGameService(repo repositories.GameRepository) *GameService {
+	return &GameService{repo: repo}
+}
 
-func (c GameService) BatchCreateGame(games []models.GameInput) (interface{}, error) {
+func (s *GameService) BatchCreateGame(games []models.GameInput) (interface{}, error) {
 	interfaceSlice := make([]interface{}, len(games))
 	for i, v := range games {
 		interfaceSlice[i] = models.Game{
@@ -19,30 +22,29 @@ func (c GameService) BatchCreateGame(games []models.GameInput) (interface{}, err
 		}
 	}
 
-	result, err := gameRepository.BatchInsert(interfaceSlice)
+	result, err := s.repo.BatchInsert(interfaceSlice)
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (c GameService) GetGame(id string) (interface{}, error) {
-
-	result, err := gameRepository.FindOne(id)
+func (s *GameService) GetGame(id string) (interface{}, error) {
+	result, err := s.repo.FindOne(id)
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (c GameService) FindPaginatedGame(pagination models.Pagination) (interface{}, int, error) {
-	result, total, err := gameRepository.FindPaginated(pagination)
+func (s *GameService) FindPaginatedGame(pagination models.Pagination) (interface{}, int, error) {
+	result, total, err := s.repo.FindPaginated(pagination)
 	if err != nil {
 		return nil, 0, err
 	}
 	return result, total, nil
 }
 
-func (c GameService) CheckAlreadyExistingGames(gameNames []string) ([]string, error) {
-	return gameRepository.CheckAlreadyExistingGames(gameNames)
+func (s *GameService) CheckAlreadyExistingGames(gameNames []string) ([]string, error) {
+	return s.repo.CheckAlreadyExistingGames(gameNames)
 }

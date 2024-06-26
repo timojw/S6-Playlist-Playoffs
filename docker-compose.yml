@@ -92,6 +92,22 @@ services:
     ports:
       - "8082:8082"
 
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    networks:
+      - pp-network
+
+  mongo-seed:
+    build:
+      context: ./mongo-seed
+      dockerfile: Dockerfile
+    depends_on:
+      - mongo
+    networks:
+      - pp-network
 
   web:
     container_name: web
