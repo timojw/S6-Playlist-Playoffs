@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20]
-        app-name: [game, voting]
+        app-name: [game-service, voting-service] # Replace with actual Nx project names if available
     steps:
       - uses: actions/checkout@v4
         with:
@@ -38,24 +38,37 @@ jobs:
         run: pnpm install -g nx
 
       - name: Build Nx application
-        run: nx build "${{ matrix.app-name }}"
+        run: |
+          if [ -d "apps/${{ matrix.app-name }}" ]; then
+            nx build "${{ matrix.app-name }}"
+          else
+            echo "Nx project ${{ matrix.app-name }} not found, skipping."
+          fi
 
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
       - name: Build Docker image for Nx project
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }} .
+          if [ -d "apps/${{ matrix.app-name }}" ]; then
+            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }} -f apps/${{ matrix.app-name }}/Dockerfile apps/${{ matrix.app-name }}
+          else
+            echo "Dockerfile for ${{ matrix.app-name }} not found, skipping."
+          fi
 
       - name: Push Docker image for Nx project
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }}
+          if [ -d "apps/${{ matrix.app-name }}" ]; then
+            docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }}
+          else
+            echo "Docker image for ${{ matrix.app-name }} not found, skipping."
+          fi
 
   build-non-nx-projects:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app-name: [krakend, grafana]
+        app-name: [krakend, grafana] # Non-Nx projects
     steps:
       - uses: actions/checkout@v4
         with:
@@ -67,7 +80,7 @@ jobs:
 
       - name: Build Docker image for non-Nx project
         run: |
-          docker build -f Dockerfile.${{ matrix.app-name }} -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }} .
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }} -f services/${{ matrix.app-name }}/Dockerfile services/${{ matrix.app-name }}
 
       - name: Push Docker image for non-Nx project
         run: |
@@ -78,7 +91,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app-name: [game-service, voting-service, krakend, grafana]
+        app-name: [game-service, voting-service, krakend, grafana] # Use correct names
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
