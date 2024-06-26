@@ -5,12 +5,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  dockerhub-release:
+  build-nx-projects:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [20]
-        app-name: [game-service, voting-service]
+        app-name: [game-service, voting-service] # Only Nx projects
     steps:
       - uses: actions/checkout@v4
         with:
@@ -37,26 +37,48 @@ jobs:
       - name: Install nx
         run: pnpm install -g nx
 
-      - name: Build application
+      - name: Build Nx application
         run: nx build "${{ matrix.app-name }}"
 
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
-      - name: Build Docker image
+      - name: Build Docker image for Nx project
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }} .
 
-      - name: Push Docker image
+      - name: Push Docker image for Nx project
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }}
+
+  build-non-nx-projects:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app-name: [krakend, grafana] # Non-Nx projects
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+
+      - name: Build Docker image for non-Nx project
+        run: |
+          docker build -f Dockerfile.${{ matrix.app-name }} -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }} .
+
+      - name: Push Docker image for non-Nx project
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }}
 
   deploy:
-    needs: dockerhub-release
+    needs: [build-nx-projects, build-non-nx-projects]
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app-name: [game-service, voting-service]
+        app-name: [game-service, voting-service, krakend, grafana]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
