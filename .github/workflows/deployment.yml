@@ -25,8 +25,10 @@ jobs:
             docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/krakend:${{ github.sha }} -f services/gateway/Dockerfile services/gateway
           elif [[ "${{ matrix.service-name }}" == "grafana" ]]; then
             docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/grafana:${{ github.sha }} -f services/gateway/monitoring/grafana/Dockerfile services/gateway/monitoring/grafana
-          else
-            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service-name }}:${{ github.sha }} -f services/${{ matrix.service-name }}/Dockerfile services/${{ matrix.service-name }}
+          elif [[ "${{ matrix.service-name }}" == "game" ]]; then
+            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/game:${{ github.sha }} -f services/game/Dockerfile services/game
+          elif [[ "${{ matrix.service-name }}" == "voting" ]]; then
+            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/voting:${{ github.sha }} -f services/voting/Dockerfile services/voting
           fi
 
       - name: Push Docker image
