@@ -5,16 +5,15 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/timojw/S6-Playlist-Playoffs/services/voting/internal/kafka"
 )
 
 type Vote struct {
-	GameID int `json:"game_id"`
-	SongID int `json:"song_id"`
-	Points int `json:"points"`
+	GameID string `json:"game_id"`
+	SongID int    `json:"song_id"`
+	Points int    `json:"points"`
 }
 
 type VoteResult struct {
@@ -26,8 +25,8 @@ type VotesResponse struct {
 	Votes []VoteResult `json:"votes"`
 }
 
-var votes = map[int]map[int]int{
-	1: {
+var votes = map[string]map[int]int{
+	"667b67227b64317349aef419": {
 		1:  7,
 		2:  2,
 		3:  10,
@@ -60,7 +59,7 @@ func addVotesHandler(w http.ResponseWriter, r *http.Request) {
 			votes[vote.GameID] = make(map[int]int)
 		}
 		votes[vote.GameID][vote.SongID] += vote.Points
-		log.Printf("Added %d points to song %d in game %d", vote.Points, vote.SongID, vote.GameID)
+		log.Printf("Added %d points to song %d in game %s", vote.Points, vote.SongID, vote.GameID)
 	}
 
 	log.Println("Successfully added votes")
@@ -71,19 +70,21 @@ func getVotesHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("Received request to get votes")
 
 	vars := mux.Vars(r)
-	gameIDStr := vars["game_id"]
-	log.Printf("Game ID from request: %s", gameIDStr)
+	gameID := vars["game_id"]
+	log.Printf("Game ID from request: %s", gameID)
 
-	gameID, err := strconv.Atoi(gameIDStr)
-	if err != nil {
-		log.Printf("Invalid game ID: %s", gameIDStr)
+	// Additional Logging
+	log.Printf("Current votes map: %+v", votes)
+
+	if gameID == "" {
+		log.Println("Game ID is empty")
 		http.Error(w, "Invalid game ID", http.StatusBadRequest)
 		return
 	}
 
 	gameVotes, ok := votes[gameID]
 	if !ok {
-		log.Printf("No votes found for game ID: %d", gameID)
+		log.Printf("No votes found for game ID: %s", gameID)
 		http.Error(w, "Game not found", http.StatusNotFound)
 		return
 	}

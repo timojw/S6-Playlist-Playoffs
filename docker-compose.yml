@@ -100,14 +100,14 @@ services:
     networks:
       - pp-network
 
-  mongo-seed:
-    build:
-      context: ./mongo-seed
-      dockerfile: Dockerfile
-    depends_on:
-      - mongo
-    networks:
-      - pp-network
+  # mongo-seed:
+  #   build:
+  #     context: ./mongo-seed
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     - mongo
+  #   networks:
+  #     - pp-network
 
   web:
     container_name: web
