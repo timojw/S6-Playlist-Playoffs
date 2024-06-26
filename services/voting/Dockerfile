@@ -7,7 +7,7 @@ COPY services/voting/go.mod services/voting/go.sum ./
 RUN go mod download
 
 # Copy the source code
-COPY services/voting .
+COPY . .
 
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o voting-service ./cmd

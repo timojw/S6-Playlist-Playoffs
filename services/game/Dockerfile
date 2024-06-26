@@ -7,7 +7,7 @@ COPY services/game/go.mod services/game/go.sum ./
 RUN go mod download
 
 # Copy the source code
-COPY services/game .
+COPY . .
 
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o game-service ./cmd
