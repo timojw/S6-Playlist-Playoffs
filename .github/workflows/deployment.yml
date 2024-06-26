@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service-name: [game, voting, krakend, grafana]
+        service-name: [game, voting, krakend, grafana, web]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -17,30 +17,32 @@ jobs:
           fetch-depth: 0
 
       - name: Docker login
-        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+        run: docker login -u timojw -p ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
       - name: Build Docker image
         run: |
           if [[ "${{ matrix.service-name }}" == "krakend" ]]; then
-            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/krakend:${{ github.sha }} -f services/gateway/Dockerfile services/gateway
+            docker build -t timojw/krakend:${{ github.sha }} -f services/gateway/Dockerfile .
           elif [[ "${{ matrix.service-name }}" == "grafana" ]]; then
-            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/grafana:${{ github.sha }} -f services/gateway/monitoring/grafana/Dockerfile services/gateway/monitoring/grafana
+            docker build -t timojw/grafana:${{ github.sha }} -f services/gateway/monitoring/grafana/Dockerfile .
           elif [[ "${{ matrix.service-name }}" == "game" ]]; then
-            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/game:${{ github.sha }} -f services/game/Dockerfile services/game
+            docker build -t timojw/game:${{ github.sha }} -f services/game/Dockerfile .
           elif [[ "${{ matrix.service-name }}" == "voting" ]]; then
-            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/voting:${{ github.sha }} -f services/voting/Dockerfile services/voting
+            docker build -t timojw/voting:${{ github.sha }} -f services/voting/Dockerfile .
+          elif [[ "${{ matrix.service-name }}" == "web" ]]; then
+            docker build -t timojw/web:${{ github.sha }} -f services/web/playlist-playoffs/Dockerfile .
           fi
 
       - name: Push Docker image
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service-name }}:${{ github.sha }}
+          docker push timojw/${{ matrix.service-name }}:${{ github.sha }}
 
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service-name: [game, voting, krakend, grafana]
+        service-name: [game, voting, krakend, grafana, web]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
