@@ -1,4 +1,3 @@
-# Dockerfile for Grafana
 FROM grafana/grafana:9.1.2
 
 ENV INFLUXDB_HOST=${INFLUXDB_HOST}
@@ -10,11 +9,11 @@ ENV INFLUXDB_USER_PASSWORD=${INFLUXDB_USER_PASSWORD}
 EXPOSE 3000
 
 # Copy dashboard configurations
-COPY ./dashboards/all.yml /etc/grafana/provisioning/dashboards/all.yml
-COPY ./krakend /var/lib/grafana/dashboards/krakend
+COPY dashboards/all.yml /etc/grafana/provisioning/dashboards/all.yml
+COPY krakend /var/lib/grafana/dashboards/krakend
 
 # Copy datasource template
-COPY ./datasources/all.template.yml /etc/grafana/provisioning/datasources/all.template.yml
+COPY datasources/all.template.yml /etc/grafana/provisioning/datasources/all.template.yml
 
 USER root
 
