@@ -62,5 +62,5 @@ jobs:
 
       - name: Deploy to AKS
         run: |
-          kubectl set image deployment/${{ matrix.service-name }} ${ matrix.service-name }}=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service-name }}:${{ github.sha }} --record
+          kubectl set image deployment/${{ matrix.service-name }} ${{ matrix.service-name }}=timojw/${{ matrix.service-name }}:${{ github.sha }} --record
           kubectl rollout restart deployment/${{ matrix.service-name }}
