@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20]
-        app-name: [game-service, voting-service] # Only Nx projects
+        app-name: [game, voting]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app-name: [krakend, grafana] # Non-Nx projects
+        app-name: [krakend, grafana]
     steps:
       - uses: actions/checkout@v4
         with:
