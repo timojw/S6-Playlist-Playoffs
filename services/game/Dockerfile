@@ -3,14 +3,14 @@ WORKDIR /app
 RUN mkdir -p services/game
 RUN mkdir data
 
-COPY . .
+COPY services/game /app/services/game
 RUN cd services/game && CGO_ENABLED=0 GOOS=linux go build -o game-service ./cmd
 
 # Build
 FROM alpine:3.19.1
 WORKDIR /app
 COPY --from=builder /app/ /app/
-RUN mv /app/services/game/game-service /app/services
+RUN mv /app/services/game/game-service /app/services/game
 
 EXPOSE 8081
-CMD ["services/game-service"]
+CMD ["services/game/game-service"]
