@@ -3,7 +3,7 @@ FROM golang:1.22.2-alpine AS builder
 WORKDIR /app
 
 # Copy go.mod and go.sum files
-COPY services/game/go.mod services/game/go.sum ./
+COPY ./services/game/go.mod ./services/game/go.sum ./
 RUN go mod download
 
 # Copy the source code
