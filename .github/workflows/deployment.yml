@@ -5,70 +5,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-nx-projects:
+  build-and-push:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20]
-        app-name: [game-service, voting-service] # Replace with actual Nx project names if available
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 8
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: '1.22'
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Install nx
-        run: pnpm install -g nx
-
-      - name: Build Nx application
-        run: |
-          if [ -d "apps/${{ matrix.app-name }}" ]; then
-            nx build "${{ matrix.app-name }}"
-          else
-            echo "Nx project ${{ matrix.app-name }} not found, skipping."
-          fi
-
-      - name: Docker login
-        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
-
-      - name: Build Docker image for Nx project
-        run: |
-          if [ -d "apps/${{ matrix.app-name }}" ]; then
-            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }} -f apps/${{ matrix.app-name }}/Dockerfile apps/${{ matrix.app-name }}
-          else
-            echo "Dockerfile for ${{ matrix.app-name }} not found, skipping."
-          fi
-
-      - name: Push Docker image for Nx project
-        run: |
-          if [ -d "apps/${{ matrix.app-name }}" ]; then
-            docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }}
-          else
-            echo "Docker image for ${{ matrix.app-name }} not found, skipping."
-          fi
-
-  build-non-nx-projects:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        app-name: [krakend, grafana] # Non-Nx projects
+        service-name: [game, voting, krakend, grafana]
+        service-path: [services/game, services/voting, services/gateway, services/gateway/monitoring/grafana]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -78,20 +20,20 @@ jobs:
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
-      - name: Build Docker image for non-Nx project
+      - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }} -f services/${{ matrix.app-name }}/Dockerfile services/${{ matrix.app-name }}
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service-name }}:${{ github.sha }} ./${{ matrix.service-path }}
 
-      - name: Push Docker image for non-Nx project
+      - name: Push Docker image
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service-name }}:${{ github.sha }}
 
   deploy:
-    needs: [build-nx-projects, build-non-nx-projects]
+    needs: build-and-push
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app-name: [game-service, voting-service, krakend, grafana] # Use correct names
+        service-name: [game, voting, krakend, grafana]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -113,5 +55,5 @@ jobs:
 
       - name: Deploy to AKS
         run: |
-          kubectl set image deployment/${{ matrix.app-name }} ${ matrix.app-name }}=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }} --record
-          kubectl rollout restart deployment/${{ matrix.app-name }}
+          kubectl set image deployment/${{ matrix.service-name }} ${ matrix.service-name }}=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service-name }}:${{ github.sha }} --record
+          kubectl rollout restart deployment/${{ matrix.service-name }}
