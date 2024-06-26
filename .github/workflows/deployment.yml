@@ -10,6 +10,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20]
+        app-name: [game-service, voting-service, web, krakend, grafana]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,31 +37,26 @@ jobs:
       - name: Install nx
         run: pnpm install -g nx
 
-      - name: Get application name from tag
-        id: get_tag
-        run: |
-          TAG_NAME=$(echo "${{ github.ref }}" | awk -F'/' '{print $3}')
-          APP_NAME=$(echo "${TAG_NAME}" | awk -F'-' '{print $1}')
-          echo "Application name: ${APP_NAME}"
-          echo "::set-output name=app_name::${APP_NAME}"
-
       - name: Build application
-        run: nx build "${{ steps.get_tag.outputs.app_name }}"
+        run: nx build "${{ matrix.app-name }}"
 
       - name: Docker login
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
 
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ steps.get_tag.outputs.app_name }}:latest .
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }} .
 
       - name: Push Docker image
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ steps.get_tag.outputs.app_name }}:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }}
 
   deploy:
     needs: dockerhub-release
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app-name: [game-service, voting-service, web, krakend, grafana]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -80,15 +76,7 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Get application name from tag
-        id: get_tag
-        run: |
-          TAG_NAME=$(echo "${{ github.ref }}" | awk -F'/' '{print $3}')
-          APP_NAME=$(echo "${TAG_NAME}" | awk -F'-' '{print $1}')
-          echo "Application name: ${APP_NAME}"
-          echo "::set-output name=app_name::${APP_NAME}"
-
       - name: Deploy to AKS
         run: |
-          kubectl set image deployment/${{ steps.get_tag.outputs.app_name }} ${ steps.get_tag.outputs.app_name }}=${{ secrets.DOCKERHUB_USERNAME }}/${{ steps.get_tag.outputs.app_name }}:latest --record
-          kubectl rollout restart deployment/${{ steps.get_tag.outputs.app_name }}
+          kubectl set image deployment/${{ matrix.app-name }} ${ matrix.app-name }}=${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.app-name }}:${{ github.sha }} --record
+          kubectl rollout restart deployment/${{ matrix.app-name }}
