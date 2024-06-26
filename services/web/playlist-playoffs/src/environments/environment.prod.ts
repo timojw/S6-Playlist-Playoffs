@@ -1,24 +1,30 @@
 import config from '../../auth_config.json';
 
-const { domain, clientId, audience, apiUri, errorPath } = config as {
+const { domain, clientId, authorizationParams: { audience }, apiUri, errorPath } = config as {
   domain: string;
   clientId: string;
-  audience?: string;
+  authorizationParams: {
+    audience?: string;
+  },
   apiUri: string;
   errorPath: string;
 };
 
 export const environment = {
-  production: true,
-  apiUrl: 'http://krakend:8080',
+  production: false,
+  apiUrl: 'https://4.182.194.187:8080',
   auth: {
     domain,
     clientId,
-    ...(audience && audience !== "YOUR_API_IDENTIFIER" ? { audience } : null),
-    redirectUri: window.location.origin,
+    authorizationParams: {
+      ...(audience && audience !== 'YOUR_API_IDENTIFIER' ? { audience } : null),
+      redirect_uri: window.location.origin,
+    },
     errorPath,
   },
   httpInterceptor: {
     allowedList: [`${apiUri}/*`],
   },
 };
+
+console.log('Environment config:', environment);

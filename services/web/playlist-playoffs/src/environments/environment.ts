@@ -12,13 +12,13 @@ const { domain, clientId, authorizationParams: { audience }, apiUri, errorPath }
 
 export const environment = {
   production: false,
-  apiUrl: 'https://4.182.194.187:8080', // Use your external IP or domain with HTTPS
+  apiUrl: 'https://localhost:8080', // Use your external IP or domain with HTTPS
   auth: {
     domain,
     clientId,
     authorizationParams: {
       ...(audience && audience !== 'YOUR_API_IDENTIFIER' ? { audience } : null),
-      redirect_uri: 'https://4.182.194.187', // Use your external IP or domain with HTTPS
+      redirect_uri: 'https://localhost', // Use your external IP or domain with HTTPS
     },
     errorPath,
   },
