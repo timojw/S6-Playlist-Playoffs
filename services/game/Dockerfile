@@ -15,7 +15,8 @@ COPY services/game .
 RUN CGO_ENABLED=0 GOOS=linux go build -o /app/game-service ./cmd
 
 # Stage 2: Create the runtime image
-FROM scratch
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
 COPY --from=builder /app/game-service /game-service
 
 EXPOSE 8081
