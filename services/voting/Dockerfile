@@ -2,14 +2,14 @@
 FROM golang:1.22.2-alpine AS builder
 WORKDIR /app
 
-# Copy all files to the container
-COPY . .
-
-# Change to the service directory
-WORKDIR /app/services/voting
+# Copy go.mod and go.sum files
+COPY services/voting/go.mod services/voting/go.sum ./
 
 # Download dependencies
 RUN go mod download
+
+# Copy the rest of the application
+COPY services/voting .
 
 # Build the Go application
 RUN CGO_ENABLED=0 GOOS=linux go build -o /app/voting-service ./cmd
