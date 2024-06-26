@@ -1,15 +1,22 @@
+# Stage 1: Build the Go application
 FROM golang:1.22.2-alpine AS builder
 WORKDIR /app
 
-# Copy only the relevant part of the repository
-COPY  . .
+# Copy all files to the container
+COPY . .
+
+# Change to the service directory
+WORKDIR /app/services/voting
+
+# Download dependencies
+RUN go mod download
 
 # Build the Go application
-RUN CGO_ENABLED=0 GOOS=linux go build -o voting-service ./cmd
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/voting-service ./cmd
 
+# Stage 2: Create the runtime image
 FROM scratch
-
 COPY --from=builder /app/voting-service /voting-service
 
-EXPOSE 8081
+EXPOSE 8082
 CMD ["/voting-service"]
