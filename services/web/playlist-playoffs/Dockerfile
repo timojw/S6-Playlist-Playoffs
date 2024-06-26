@@ -11,12 +11,13 @@ RUN npm install --legacy-peer-deps
 COPY . .
 RUN npm run build
 
+# Stage 2: Set up NGINX
 FROM nginx:alpine
 
 COPY --from=build /app/dist/login-demo /usr/share/nginx/html
 COPY nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
-COPY certs/tls.crt /etc/tls/tls.crt
-COPY certs/tls.key /etc/tls/tls.key
+COPY certs/tls.crt /etc/nginx/tls/tls.crt
+COPY certs/tls.key /etc/nginx/tls/tls.key
 
 EXPOSE 80 443
 
