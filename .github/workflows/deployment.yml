@@ -21,20 +21,13 @@ jobs:
 
       - name: Build Docker image
         run: |
-          case ${{ matrix.service-name }} in
-            krakend)
-              docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/krakend:${{ github.sha }} -f services/gateway/Dockerfile services/gateway
-              ;;
-            grafana)
-              docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/grafana:${{ github.sha }} -f services/gateway/monitoring/grafana/Dockerfile services/gateway/monitoring/grafana
-              ;;
-            game)
-              docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/game:${{ github.sha }} -f services/game/Dockerfile services/game
-              ;;
-            voting)
-              docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/voting:${{ github.sha }} -f services/voting/Dockerfile services/voting
-              ;;
-          esac
+          if [[ "${{ matrix.service-name }}" == "krakend" ]]; then
+            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/krakend:${{ github.sha }} -f services/gateway/Dockerfile services/gateway
+          elif [[ "${{ matrix.service-name }}" == "grafana" ]]; then
+            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/grafana:${{ github.sha }} -f services/gateway/monitoring/grafana/Dockerfile services/gateway/monitoring/grafana
+          else
+            docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service-name }}:${{ github.sha }} -f services/${{ matrix.service-name }}/Dockerfile services/${{ matrix.service-name }}
+          fi
 
       - name: Push Docker image
         run: |
