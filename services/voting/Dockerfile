@@ -1,24 +1,15 @@
-# Stage 1: Build the Go application
 FROM golang:1.22.2-alpine AS builder
 WORKDIR /app
 
-# Copy go.mod and go.sum files
-COPY ./services/voting/go.mod ./services/voting/go.sum ./
-RUN go mod download
+# Copy only the relevant part of the repository
+COPY  . .
 
-# Copy the source code
-COPY . .
-
-# Build the application
+# Build the Go application
 RUN CGO_ENABLED=0 GOOS=linux go build -o voting-service ./cmd
 
-# Stage 2: Create the final image
-FROM alpine:latest
-WORKDIR /root/
-COPY --from=builder /app/voting-service .
+FROM scratch
 
-# Expose the application port
-EXPOSE 8080
+COPY --from=builder /app/voting-service /voting-service
 
-# Run the application
-CMD ["./voting-service"]
+EXPOSE 8081
+CMD ["/voting-service"]
