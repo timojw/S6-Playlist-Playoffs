@@ -14,9 +14,9 @@ RUN npm run build
 FROM nginx:alpine
 
 COPY --from=build /app/dist/login-demo /usr/share/nginx/html
-COPY nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
-COPY certs/tls.crt /etc/tls/tls.crt
-COPY certs/tls.key /etc/tls/tls.key
+COPY ./nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
+COPY ./certs/tls.crt /etc/tls/tls.crt
+COPY ./certs/tls.key /etc/tls/tls.key
 
 EXPOSE 80 443
 
