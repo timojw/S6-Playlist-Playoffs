@@ -3,10 +3,10 @@ WORKDIR /app
 RUN mkdir -p services/voting
 RUN mkdir data
 
-COPY services/voting services/voting
+COPY . .
 RUN cd services/voting && CGO_ENABLED=0 GOOS=linux go build -o voting-service ./cmd
 
-#Build
+# Build
 FROM alpine:3.19.1
 WORKDIR /app
 COPY --from=builder /app/ /app/

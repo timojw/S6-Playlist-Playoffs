@@ -1,9 +1,9 @@
 FROM golang:1.22.2-alpine AS builder
 WORKDIR /app
-RUN mkdir -p services/game   
+RUN mkdir -p services/game
 RUN mkdir data
 
-COPY services/game services/game
+COPY . .
 RUN cd services/game && CGO_ENABLED=0 GOOS=linux go build -o game-service ./cmd
 
 # Build
