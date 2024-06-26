@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         node-version: [20]
-        app-name: [game-service, voting-service, web, krakend, grafana]
+        app-name: [game-service, voting-service]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app-name: [game-service, voting-service, web, krakend, grafana]
+        app-name: [game-service, voting-service]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
