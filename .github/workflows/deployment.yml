@@ -23,13 +23,16 @@ jobs:
         run: |
           case ${{ matrix.service-name }} in
             krakend)
-              docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/krakend:${{ github.sha }} services/gateway
+              docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/krakend:${{ github.sha }} -f services/gateway/Dockerfile services/gateway
               ;;
             grafana)
-              docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/grafana:${{ github.sha }} services/gateway/monitoring/grafana
+              docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/grafana:${{ github.sha }} -f services/gateway/monitoring/grafana/Dockerfile services/gateway/monitoring/grafana
               ;;
-            *)
-              docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service-name }}:${{ github.sha }} services/${{ matrix.service-name }}
+            game)
+              docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/game:${{ github.sha }} -f services/game/Dockerfile services/game
+              ;;
+            voting)
+              docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/voting:${{ github.sha }} -f services/voting/Dockerfile services/voting
               ;;
           esac
 
