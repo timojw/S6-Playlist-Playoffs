@@ -9,6 +9,9 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [RouterOutlet, NavBarComponent, FormsModule],
 })
+
 export class AppComponent {
   title = 'PlaylistPlayoffs';
 }
+
+console.log("Yep, correct one");

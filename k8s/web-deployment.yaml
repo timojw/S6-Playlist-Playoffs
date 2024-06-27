@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
       - name: web
-        image: timojw/web:1
+        image: timojw/web:latest
         ports:
         - containerPort: 80
         - containerPort: 443
         env:
         - name: API_URL
-          value: "http://4.182.194.187:8080"
+          value: "https://4.182.90.170.nip.io"
