@@ -27,11 +27,11 @@ spec:
             - name: COMPONENT_HOST
               value: http://pc-microservice:4050
             - name: GAME_HOST
-              value: http://game:8081
+              value: http://game-service:8081
             - name: KRAKEND_PORT
               value: '8080'
-          image: jordywalraven/ciri2-gateway:release
-          name: gateway
+          image: timojw/krakend:1
+          name: krakend
           ports:
             - containerPort: 8080
               protocol: TCP

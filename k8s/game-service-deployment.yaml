@@ -27,6 +27,8 @@ spec:
                 configMapKeyRef:
                   key: KAFKA_BOOTSTRAP_SERVER
                   name: game-service-env
+            - name: MONGOURI
+              value: "mongodb+srv://timo:qVEnGsl5seIOfMSU@pp1.fvivmoj.mongodb.net/?retryWrites=true&w=majority&appName=pp1"
           image: timojw/game:1
           name: game-service
           ports:

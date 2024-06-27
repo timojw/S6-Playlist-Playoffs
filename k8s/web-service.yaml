@@ -8,8 +8,10 @@ spec:
     - name: "http"
       port: 3000
       targetPort: 80
+      protocol: TCP
     - name: "https"
       port: 3001
       targetPort: 443
+      protocol: TCP
   selector:
-    app: web  # This should match the labels used in your deployment
+    app: web 

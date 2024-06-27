@@ -8,6 +8,8 @@ metadata:
     io.kompose.service: krakend
   name: krakend
 spec:
+  type: LoadBalancer
+  loadBalancerIP: 4.182.194.187
   ports:
     - name: "8080"
       port: 8080

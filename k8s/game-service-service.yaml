@@ -8,6 +8,8 @@ metadata:
     io.kompose.service: game-service
   name: game-service
 spec:
+  type: LoadBalancer
+  loadBalancerIP: 4.182.194.187
   ports:
     - name: "8081"
       port: 8081

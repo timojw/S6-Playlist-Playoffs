@@ -9,6 +9,7 @@ metadata:
   name: voting-service
 spec:
   type: LoadBalancer
+  loadBalancerIP: 4.182.194.187
   ports:
     - name: "8082"
       port: 8082
