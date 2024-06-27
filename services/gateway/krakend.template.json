@@ -2,8 +2,6 @@
   "version": 3,
   "name": "Playlist Playoffs API Gateway",
   "port": 8080,
-  "cache_ttl": "3600s",
-  "timeout": "10s",
   "endpoints": [
     {
       "endpoint": "/api/game/add",
@@ -16,7 +14,7 @@
           "encoding": "json",
           "sd": "static",
           "method": "POST",
-          "host": ["https://game:8081"]
+          "host": ["http://game-service:8081"]
         }
       ]
     },
@@ -31,7 +29,7 @@
           "encoding": "json",
           "sd": "static",
           "method": "GET",
-          "host": ["https://game:8081"]
+          "host": ["http://game-service:8081"]
         }
       ]
     },
@@ -46,7 +44,7 @@
           "encoding": "json",
           "sd": "static",
           "method": "POST",
-          "host": ["https://voting:8082"]
+          "host": ["http://voting-service:8082"]
         }
       ]
     },
@@ -61,7 +59,7 @@
           "encoding": "json",
           "sd": "static",
           "method": "GET",
-          "host": ["https://voting:8082"]
+          "host": ["http://voting-service:8082"]
         }
       ]
     }
@@ -91,7 +89,7 @@
       "password": "${INFLUXDB_USER_PASSWORD}"
     },
     "security/cors": {
-      "allow_origins": ["*"],
+      "allow_origins": ["http://localhost:4200", "http://localhost:3000", "https://4.182.99.127"],
       "allow_methods": ["POST", "GET", "OPTIONS"],
       "allow_headers": ["Origin", "Authorization", "Content-Type", "Accept"],
       "expose_headers": ["Content-Length"],
