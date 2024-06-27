@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: timojw/web:1
+        image: timojw/web:latest
         ports:
         - containerPort: 80
         - containerPort: 443
