@@ -36,6 +36,7 @@ jobs:
       - name: Push Docker image
         run: |
           docker push timojw/${{ matrix.service-name }}:${{ github.sha }}
+          docker push timojw/${{ matrix.service-name }}:latest
 
   deploy:
     needs: build-and-push
