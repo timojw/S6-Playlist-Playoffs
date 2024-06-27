@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert
+    kompose.version: 1.34.0 (cbf2835db)
+  labels:
+    io.kompose.service: game
+  name: game
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: game
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe convert
+        kompose.version: 1.34.0 (cbf2835db)
+      labels:
+        io.kompose.service: game
+    spec:
+      containers:
+        - env:
+            - name: KAFKA_BOOTSTRAP_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  key: KAFKA_BOOTSTRAP_SERVER
+                  name: game-env
+            - name: MONGOURI
+              valueFrom:
+                configMapKeyRef:
+                  key: MONGOURI
+                  name: game-env
+            - name: PC_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: PC_PORT
+                  name: game-env
+          image: game-service:latest
+          name: game
+          ports:
+            - containerPort: 8081
+              protocol: TCP
+      restartPolicy: Always
