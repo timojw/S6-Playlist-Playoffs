@@ -89,12 +89,15 @@
       "password": "${INFLUXDB_USER_PASSWORD}"
     },
     "security/cors": {
-      "allow_origins": ["*"],
+      "allow_origins": ["http://localhost:4200", "http://localhost:3000", "https://4.182.99.127:3001", "http://4.182.99.127:3000"],
       "allow_methods": ["POST", "GET", "OPTIONS"],
       "allow_headers": ["Origin", "Authorization", "Content-Type", "Accept"],
       "expose_headers": ["Content-Length"],
       "max_age": "12h",
       "allow_credentials": true
+    },
+    "auth/validator": {
+      "shared_cache_duration": 3600
     }
   },
   "output_encoding": "json"
