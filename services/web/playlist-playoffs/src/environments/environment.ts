@@ -18,7 +18,7 @@ export const environment = {
     clientId,
     authorizationParams: {
       ...(audience && audience !== 'YOUR_API_IDENTIFIER' ? { audience } : null),
-      redirect_uri: 'https://localhost', // Use your external IP or domain with HTTPS
+      redirect_uri: 'https://4.182.90.170.nip.io', // Use your external IP or domain with HTTPS
     },
     errorPath,
   },

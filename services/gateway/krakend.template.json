@@ -91,7 +91,7 @@
       "password": "${INFLUXDB_USER_PASSWORD}"
     },
     "security/cors": {
-      "allow_origins": ["http://localhost:4200", "http://localhost:3000", "https://4.182.99.127:3001"],
+      "allow_origins": ["http://localhost:4200", "http://localhost:3000", "https://4.182.90.170.nip.io"],
       "allow_methods": ["POST", "GET", "OPTIONS"],
       "allow_headers": ["Origin", "Authorization", "Content-Type", "Accept"],
       "expose_headers": ["Content-Length"],
