@@ -12,7 +12,7 @@ const { domain, clientId, authorizationParams: { audience }, apiUri, errorPath }
 
 export const environment = {
   production: false,
-  apiUrl: 'https://4.182.194.187:8080',
+  apiUrl: 'http://4.182.99.25:8080',
   auth: {
     domain,
     clientId,
