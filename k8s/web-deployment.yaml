@@ -17,6 +17,7 @@ spec:
       containers:
       - name: web
         image: timojw/web:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         - containerPort: 443
