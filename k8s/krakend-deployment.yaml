@@ -22,14 +22,18 @@ spec:
     spec:
       containers:
         - env:
-            - name: AUDIENCE
-              value: https://dev-emkd7gpm4ah6eukc.us.auth0.com/api/v2/
-            - name: GAME_HOST
-              value: http://game-service:8081
-            - name: INFLUXDB_HOST
-            - name: INFLUXDB_PORT
-            - name: INFLUXDB_USER
-            - name: INFLUXDB_USER_PASSWORD
+          - name: AUDIENCE
+            value: "https://dev-emkd7gpm4ah6eukc.us.auth0.com/api/v2/"
+          - name: GAME_HOST
+            value: "http://game-service:8081"
+          - name: INFLUXDB_HOST
+            value: "<your_influxdb_host>"
+          - name: INFLUXDB_PORT
+            value: "<your_influxdb_port>"
+          - name: INFLUXDB_USER
+            value: "<your_influxdb_user>"
+          - name: INFLUXDB_USER_PASSWORD
+            value: "<your_influxdb_user_password>"
           image: timojw/krakend:1
           name: krakend
           ports:
