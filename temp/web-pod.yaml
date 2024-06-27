@@ -11,7 +11,7 @@ spec:
   containers:
     - env:
         - name: API_URL
-          value: http://4.182.99.25:8080
+          value: https://4.182.99.127:8080
       image: web
       name: web
       ports:

@@ -4,6 +4,7 @@ metadata:
   name: web
 spec:
   type: LoadBalancer
+  loadBalancerIP: 4.182.99.127
   ports:
     - name: "http"
       port: 3000

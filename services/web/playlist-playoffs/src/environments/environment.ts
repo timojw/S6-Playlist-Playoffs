@@ -12,7 +12,7 @@ const { domain, clientId, authorizationParams: { audience }, apiUri, errorPath }
 
 export const environment = {
   production: false,
-  apiUrl: 'http://4.182.99.25:8080', // Use your external IP or domain with HTTPS
+  apiUrl: 'https://4.182.99.127:8080', // Use your external IP or domain with HTTPS
   auth: {
     domain,
     clientId,

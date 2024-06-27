@@ -22,4 +22,4 @@ spec:
         - containerPort: 443
         env:
         - name: API_URL
-          value: "http://4.182.194.187:8080"
+          value: "https://4.182.99.127:8080"

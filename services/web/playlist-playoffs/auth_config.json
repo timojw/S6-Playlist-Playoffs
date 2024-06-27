@@ -2,9 +2,9 @@
   "domain": "dev-emkd7gpm4ah6eukc.us.auth0.com",
   "clientId": "YbD6JdS8z4wSimCGZp3B70ceevXIgroo",
   "redirectUri": "https://4.182.99.127:3001/",
-  "apiUri": "http://4.182.99.25:8080/api/game/add",
+  "apiUri": "https://4.182.99.127:8080/api/",
   "errorPath": "/error",
   "authorizationParams": {
-    "audience": "http://4.182.99.25:8080/api/game/add"
+    "audience": "https://4.182.99.127:8080/api/"
   }
 }

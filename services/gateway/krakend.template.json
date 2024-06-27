@@ -16,7 +16,7 @@
           "encoding": "json",
           "sd": "static",
           "method": "POST",
-          "host": ["http://game:8081"]
+          "host": ["https://game:8081"]
         }
       ]
     },
@@ -31,7 +31,7 @@
           "encoding": "json",
           "sd": "static",
           "method": "GET",
-          "host": ["http://game:8081"]
+          "host": ["https://game:8081"]
         }
       ]
     },
@@ -46,7 +46,7 @@
           "encoding": "json",
           "sd": "static",
           "method": "POST",
-          "host": ["http://voting:8082"]
+          "host": ["https://voting:8082"]
         }
       ]
     },
@@ -61,7 +61,7 @@
           "encoding": "json",
           "sd": "static",
           "method": "GET",
-          "host": ["http://voting:8082"]
+          "host": ["https://voting:8082"]
         }
       ]
     }
