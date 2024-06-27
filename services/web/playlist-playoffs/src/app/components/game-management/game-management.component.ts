@@ -4,6 +4,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { environment } from 'src/environments/environment';
 
 interface Song {
   id: number;
@@ -64,7 +65,7 @@ export class GameManagementComponent implements OnInit {
   }
 
   fetchGameDetails(): void {
-    this.http.get(`http://4.182.99.25:8080/api/game/${this.gameId}`).subscribe(
+    this.http.get(`${environment.apiUrl}/api/game/${this.gameId}`).subscribe(
       (data: any) => {
         this.game = data;
         console.log('Game data:', this.game);
@@ -101,7 +102,7 @@ export class GameManagementComponent implements OnInit {
 
     const headers = { 'Content-Type': 'application/json' };
 
-    this.http.post('http://4.182.99.25:8080/api/votes', { votes }, { headers }).subscribe(
+    this.http.post(`${environment.apiUrl}/api/votes`, { votes }, { headers }).subscribe(
       () => {
         console.log('Votes saved successfully');
       },
@@ -117,7 +118,7 @@ export class GameManagementComponent implements OnInit {
       return;
     }
 
-    this.http.get<VotesResponse>(`http://4.182.99.25:8080/api/votes/${this.gameId}`).subscribe(
+    this.http.get<VotesResponse>(`${environment.apiUrl}/api/votes/${this.gameId}`).subscribe(
       (response: any) => {
         console.log('Response from API:', response); // Log the entire response
 

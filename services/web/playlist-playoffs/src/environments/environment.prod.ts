@@ -12,7 +12,7 @@ const { domain, clientId, authorizationParams: { audience }, apiUri, errorPath }
 
 export const environment = {
   production: false,
-  apiUrl: 'http://4.182.99.25:8080',
+  apiUrl: 'https://4.182.90.170.nip.io',
   auth: {
     domain,
     clientId,

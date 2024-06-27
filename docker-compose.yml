@@ -115,7 +115,7 @@ services:
       context: ./services/web/playlist-playoffs
       dockerfile: Dockerfile
     environment:
-      - API_URL=http://localhost:8080
+      - API_URL=https://4.182.90.170.nip.io/
     ports:
       - "3000:80"
       - "3001:443"

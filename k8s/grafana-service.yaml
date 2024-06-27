@@ -8,8 +8,7 @@ metadata:
     io.kompose.service: grafana
   name: grafana
 spec:
-  type: LoadBalancer
-  loadBalancerIP: 4.182.194.187
+  type: ClusterIP
   ports:
     - name: "4000"
       port: 4000
