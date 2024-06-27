@@ -1,9 +1,9 @@
 # KrakenD Gateway Dockerfile
 FROM devopsfaith/krakend:2.6.0
 
-# # Set environment variables
-ENV GAME_HOST ${GAME_HOST}
-ENV AUDIENCE ${AUDIENCE}
+# Set environment variables
+ENV GAME_HOST=${GAME_HOST}
+ENV AUDIENCE=${AUDIENCE}
 ENV INFLUX_HOST=${INFLUX_HOST}
 ENV INFLUX_PORT=${INFLUX_PORT}
 ENV INFLUX_USER=${INFLUX_USER}
@@ -21,4 +21,8 @@ USER nonroot
 COPY krakend.template.json /etc/krakend/krakend.template.json
 
 # Set the entrypoint to generate the actual configuration file from the template and run KrakenD
-CMD envsubst < /etc/krakend/krakend.template.json > /etc/krakend/krakend.json && krakend run -c /etc/krakend/krakend.json
+CMD echo "Environment Variables:" && env && \
+    echo "Generating krakend.json from krakend.template.json" && \
+    envsubst < /etc/krakend/krakend.template.json > /etc/krakend/krakend.json && \
+    echo "Generated krakend.json:" && cat /etc/krakend/krakend.json && \
+    krakend run -c /etc/krakend/krakend.json

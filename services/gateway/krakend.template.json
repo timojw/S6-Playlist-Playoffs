@@ -84,11 +84,11 @@
       "empty_user_agent_is_bot": true
     },
     "telemetry/influx": {
-      "address": "$INFLUXDB_HOST:$INFLUXDB_PORT",
+      "address": "${INFLUXDB_HOST}:${INFLUXDB_PORT}",
       "ttl": "25s",
       "buffer_size": 100,
-      "username": "$INFLUXDB_USER",
-      "password": "$INFLUXDB_USER_PASSWORD"
+      "username": "${INFLUXDB_USER}",
+      "password": "${INFLUXDB_USER_PASSWORD}"
     },
     "security/cors": {
       "allow_origins": ["http://localhost:4200", "http://localhost:3000", "https://4.182.194.187:3001"],
