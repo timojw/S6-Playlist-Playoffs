@@ -30,7 +30,7 @@ spec:
               value: http://game-service:8081
             - name: KRAKEND_PORT
               value: '8080'
-          image: timojw/krakend:1
+          image: timojw/krakend:56edc6565a0a2924abf7d0d538c2c507635e6fa7
           name: krakend
           ports:
             - containerPort: 8080
