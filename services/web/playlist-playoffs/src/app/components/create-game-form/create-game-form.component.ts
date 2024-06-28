@@ -42,10 +42,10 @@ export class CreateGameFormComponent {
     };
 
     // Log the request data to the console
-    console.log('Sending POST request to API:', `${environment.apiUrl}/api/game/add`);
+    console.log('Sending POST request to API:', `$https://4.182.90.170.nip.io/api/game/add`);
     console.log('Request data:', postData);
 
-    this.http.post(`${environment.apiUrl}/api/game/add`, postData).subscribe({
+    this.http.post(`https://4.182.90.170.nip.io/api/game/add`, postData).subscribe({
       next: (response) => console.log('Response from API:', response),
       error: (error) => console.error('There was an error!', error)
     });
