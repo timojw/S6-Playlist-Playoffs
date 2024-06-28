@@ -4,7 +4,6 @@ import (
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/swag/example/basic/docs"
-	config "github.com/timojw/S6-Playlist-Playoffs/services/game/config"
 	"github.com/timojw/S6-Playlist-Playoffs/services/game/internal/models"
 	"github.com/timojw/S6-Playlist-Playoffs/services/game/internal/routes"
 )
@@ -22,14 +21,14 @@ func main() {
 	router.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	docs.SwaggerInfo.BasePath = "/"
-	docs.SwaggerInfo.Host = "localhost:" + config.EnvPort()
+	// docs.SwaggerInfo.Host = "localhost:" + config.EnvPort()
 
-	config.SetIndexes()
+	// config.SetIndexes()
 
 	routes.GameRoutes(router)
 	routes.SwaggerRoutes(router)
 
-	router.Run("0.0.0.0:" + config.EnvPort())
+	router.Run("0.0.0.0:8081")
 
 	// if os.Getenv("KAFKA_BOOTSTRAP_SERVER") == "" {
 	// 	os.Setenv("KAFKA_BOOTSTRAP_SERVER", "kafka:9092")

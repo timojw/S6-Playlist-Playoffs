@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -40,13 +41,13 @@ func GetCollection(client *mongo.Client, collectionName string) *mongo.Collectio
 }
 
 func SetIndexes() {
-	// gameCollection := GetCollection(DB, "games")
-	// indexModel := mongo.IndexModel{
-	// 	Keys:    bson.M{"name": 1},
-	// 	Options: options.Index().SetUnique(true),
-	// }
-	// _, err := gameCollection.Indexes().CreateOne(context.Background(), indexModel)
-	// if err != nil {
-	// 	panic(err)
-	// }
+	gameCollection := GetCollection(DB, "games")
+	indexModel := mongo.IndexModel{
+		Keys:    bson.M{"name": 1},
+		Options: options.Index().SetUnique(true),
+	}
+	_, err := gameCollection.Indexes().CreateOne(context.Background(), indexModel)
+	if err != nil {
+		panic(err)
+	}
 }
