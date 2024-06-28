@@ -9,14 +9,8 @@
       "backend": [
         {
           "host": ["http://game-service:8081"],
-          "url_pattern": "/game",
-          "method": "POST",
-          "extra_config": {
-            "github.com/devopsfaith/krakend-http": {
-              "return_error_details": true,
-              "allowed_status_codes": [200, 201, 202, 204]
-            }
-          }
+          "url_pattern": "/api/game",
+          "method": "POST"
         }
       ]
     },
@@ -26,14 +20,8 @@
       "backend": [
         {
           "host": ["http://game-service:8081"],
-          "url_pattern": "/game/{id}",
-          "method": "GET",
-          "extra_config": {
-            "github.com/devopsfaith/krakend-http": {
-              "return_error_details": true,
-              "allowed_status_codes": [200, 201, 202, 204]
-            }
-          }
+          "url_pattern": "/api/game/{id}",
+          "method": "GET"
         }
       ]
     },
@@ -43,14 +31,8 @@
       "backend": [
         {
           "host": ["http://voting-service:8082"],
-          "url_pattern": "/votes",
-          "method": "POST",
-          "extra_config": {
-            "github.com/devopsfaith/krakend-http": {
-              "return_error_details": true,
-              "allowed_status_codes": [200, 201, 202, 204]
-            }
-          }
+          "url_pattern": "/api/votes",
+          "method": "POST"
         }
       ]
     },
@@ -60,14 +42,8 @@
       "backend": [
         {
           "host": ["http://voting-service:8082"],
-          "url_pattern": "/votes/{game_id}",
-          "method": "GET",
-          "extra_config": {
-            "github.com/devopsfaith/krakend-http": {
-              "return_error_details": true,
-              "allowed_status_codes": [200, 201, 202, 204, 404]
-            }
-          }
+          "url_pattern": "/api/votes/{game_id}",
+          "method": "GET"
         }
       ]
     }
