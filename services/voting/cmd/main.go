@@ -24,7 +24,7 @@ type VotesResponse struct {
 }
 
 var votes = map[string]map[int]int{
-	"667b67227b64317349aef419": {
+	"1": {
 		1:  7,
 		2:  2,
 		3:  10,
