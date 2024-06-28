@@ -15,7 +15,7 @@
       ]
     },
     {
-      "endpoint": "/api/game/{id}",
+      "endpoint": "/api/game/:id",
       "method": "GET",
       "backend": [
         {
@@ -37,7 +37,7 @@
       ]
     },
     {
-      "endpoint": "/api/votes/{game_id}",
+      "endpoint": "/api/votes/:game_id",
       "method": "GET",
       "backend": [
         {
@@ -73,7 +73,7 @@
       "password": "${INFLUXDB_USER_PASSWORD}"
     },
     "security/cors": {
-      "allow_origins": ["http://localhost:4200", "http://localhost:3000", "https://4.182.90.170.nip.io"],
+      "allow_origins": ["http://localhost:4200", "http://localhost:3000", "http://4.182.90.170.nip.io", "https://4.182.90.170.nip.io"],
       "allow_methods": ["POST", "GET", "OPTIONS"],
       "allow_headers": ["Origin", "Authorization", "Content-Type", "Accept"],
       "expose_headers": ["Content-Length"],
