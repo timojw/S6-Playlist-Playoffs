@@ -2,66 +2,48 @@
   "version": 3,
   "name": "Playlist Playoffs API Gateway",
   "port": 8080,
-  "cache_ttl": "3600s",
-  "timeout": "10s",
   "endpoints": [
     {
       "endpoint": "/api/game/add",
       "method": "POST",
-      "timeout": "15s",
-      "output_encoding": "json",
       "backend": [
         {
+          "host": ["http://game-service:8081"],
           "url_pattern": "/game",
-          "encoding": "json",
-          "sd": "static",
-          "method": "POST",
-          "host": ["http://game:8081"]
+          "method": "POST"
         }
       ]
     },
     {
       "endpoint": "/api/game/{id}",
       "method": "GET",
-      "timeout": "15s",
-      "output_encoding": "json",
       "backend": [
         {
+          "host": ["http://game-service:8081"],
           "url_pattern": "/game/{id}",
-          "encoding": "json",
-          "sd": "static",
-          "method": "GET",
-          "host": ["http://game:8081"]
+          "method": "GET"
         }
       ]
     },
     {
       "endpoint": "/api/votes",
       "method": "POST",
-      "timeout": "15s",
-      "output_encoding": "json",
       "backend": [
         {
+          "host": ["http://voting-service:8082"],
           "url_pattern": "/votes",
-          "encoding": "json",
-          "sd": "static",
-          "method": "POST",
-          "host": ["http://voting:8082"]
+          "method": "POST"
         }
       ]
     },
     {
       "endpoint": "/api/votes/{game_id}",
       "method": "GET",
-      "timeout": "15s",
-      "output_encoding": "json",
       "backend": [
         {
+          "host": ["http://voting-service:8082"],
           "url_pattern": "/votes/{game_id}",
-          "encoding": "json",
-          "sd": "static",
-          "method": "GET",
-          "host": ["http://voting:8082"]
+          "method": "GET"
         }
       ]
     }
@@ -91,7 +73,7 @@
       "password": "${INFLUXDB_USER_PASSWORD}"
     },
     "security/cors": {
-      "allow_origins": ["http://localhost:4200", "http://localhost:3000", "https://4.182.90.170.nip.io", "https://4.182.99.127.nip.io"],
+      "allow_origins": ["http://localhost:4200", "http://localhost:3000", "https://4.182.90.170.nip.io"],
       "allow_methods": ["POST", "GET", "OPTIONS"],
       "allow_headers": ["Origin", "Authorization", "Content-Type", "Accept"],
       "expose_headers": ["Content-Length"],
@@ -101,6 +83,5 @@
     "auth/validator": {
       "shared_cache_duration": 3600
     }
-  },
-  "output_encoding": "json"
+  }
 }

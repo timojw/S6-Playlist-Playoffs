@@ -30,7 +30,7 @@ jobs:
           elif [[ "${{ matrix.service-name }}" == "voting" ]]; then
             docker build -t timojw/voting:${{ github.sha }} -f services/voting/Dockerfile .
           elif [[ "${{ matrix.service-name }}" == "web" ]]; then
-            docker build -t timojw/web:${{ github.sha }} -f services/web/playlist-playoffs/Dockerfile services/web/playlist-playoffs
+            docker build -t timojw/web:${{ github.sha }} -f services/web/playlist-playoffs/Dockerfile .
           fi
 
       - name: Push Docker image

@@ -112,8 +112,8 @@ services:
   web:
     container_name: web
     build:
-      context: ./services/web/playlist-playoffs
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/web/playlist-playoffs/Dockerfile
     environment:
       - API_URL=https://4.182.90.170.nip.io/
     ports:

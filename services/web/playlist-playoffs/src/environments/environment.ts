@@ -12,13 +12,13 @@ const { domain, clientId, authorizationParams: { audience }, apiUri, errorPath }
 
 export const environment = {
   production: false,
-  apiUrl: 'https://4.182.90.170.nip.io', // Use your external IP or domain with HTTPS
+  apiUrl: 'https://4.182.90.170.nip.io/api', 
   auth: {
     domain,
     clientId,
     authorizationParams: {
       ...(audience && audience !== 'YOUR_API_IDENTIFIER' ? { audience } : null),
-      redirect_uri: 'https://4.182.90.170.nip.io', // Use your external IP or domain with HTTPS
+      redirect_uri: 'https://4.182.90.170.nip.io', 
     },
     errorPath,
   },
