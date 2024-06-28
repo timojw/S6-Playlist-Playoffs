@@ -66,11 +66,12 @@
       "empty_user_agent_is_bot": true
     },
     "telemetry/influx": {
-      "address": "${INFLUXDB_HOST}:${INFLUXDB_PORT}",
+      "address": "http://influxdb:8086",
+      "database": "krakend",
       "ttl": "25s",
       "buffer_size": 100,
-      "username": "${INFLUXDB_USER}",
-      "password": "${INFLUXDB_USER_PASSWORD}"
+      "username": "admin",
+      "password": "admin"
     },
     "security/cors": {
       "allow_origins": ["http://localhost:4200", "http://localhost:3000", "http://4.182.90.170.nip.io", "https://4.182.90.170.nip.io"],
