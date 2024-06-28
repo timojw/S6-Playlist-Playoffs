@@ -22,20 +22,24 @@ jobs:
       - name: Build Docker image
         run: |
           if [[ "${{ matrix.service-name }}" == "krakend" ]]; then
-            docker build -t timojw/krakend:${{ github.sha }} -f services/gateway/Dockerfile services/gateway
+            docker build -t timojw/krakend:${{ github.sha }} -t timojw/krakend:latest -f services/gateway/Dockerfile services/gateway
           elif [[ "${{ matrix.service-name }}" == "grafana" ]]; then
-            docker build -t timojw/grafana:${{ github.sha }} -f services/gateway/monitoring/grafana/Dockerfile services/gateway/monitoring/grafana
+            docker build -t timojw/grafana:${{ github.sha }} -t timojw/grafana:latest -f services/gateway/monitoring/grafana/Dockerfile services/gateway/monitoring/grafana
           elif [[ "${{ matrix.service-name }}" == "game" ]]; then
-            docker build -t timojw/game:${{ github.sha }} -f services/game/Dockerfile .
+            docker build -t timojw/game:${{ github.sha }} -t timojw/game:latest -f services/game/Dockerfile .
           elif [[ "${{ matrix.service-name }}" == "voting" ]]; then
-            docker build -t timojw/voting:${{ github.sha }} -f services/voting/Dockerfile .
+            docker build -t timojw/voting:${{ github.sha }} -t timojw/voting:latest -f services/voting/Dockerfile .
           elif [[ "${{ matrix.service-name }}" == "web" ]]; then
-            docker build -t timojw/web:${{ github.sha }} -f services/web/playlist-playoffs/Dockerfile .
+            docker build -t timojw/web:${{ github.sha }} -t timojw/web:latest -f services/web/playlist-playoffs/Dockerfile .
           fi
 
-      - name: Push Docker image
+      - name: Push Docker image with commit SHA
         run: |
           docker push timojw/${{ matrix.service-name }}:${{ github.sha }}
+
+      - name: Push Docker image with latest tag
+        run: |
+          docker push timojw/${{ matrix.service-name }}:latest
 
   deploy:
     needs: build-and-push
