@@ -36,10 +36,10 @@ export class CreateGameFormComponent {
   }
 
   startGame() {
-    const postData = {
+    const postData = [{
       name: this.gameName,
       deadline: this.gameDeadline
-    };
+    }];
 
     // Log the request data to the console
     console.log('Sending POST request to API:', `${environment.apiUrl}/game/add`);
