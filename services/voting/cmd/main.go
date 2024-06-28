@@ -4,10 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
-	"github.com/timojw/S6-Playlist-Playoffs/services/voting/internal/kafka"
 )
 
 type Vote struct {
@@ -105,11 +103,11 @@ func getVotesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	if os.Getenv("KAFKA_BOOTSTRAP_SERVER") == "" {
-		os.Setenv("KAFKA_BOOTSTRAP_SERVER", "kafka:9092")
-	}
+	// if os.Getenv("KAFKA_BOOTSTRAP_SERVER") == "" {
+	// 	os.Setenv("KAFKA_BOOTSTRAP_SERVER", "kafka:9092")
+	// }
 
-	go kafka.RunConsumer()
+	// go kafka.RunConsumer()
 
 	r := mux.NewRouter()
 	r.HandleFunc("/votes", addVotesHandler).Methods("POST")
