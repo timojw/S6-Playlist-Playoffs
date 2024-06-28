@@ -21,7 +21,12 @@
         {
           "host": ["http://game-service:8081"],
           "url_pattern": "/game/{id}",
-          "method": "GET"
+          "method": "GET",
+          "extra_config": {
+            "github.com/devopsfaith/krakend/proxy": {
+              "querystring_params": ["id"]
+            }
+          }
         }
       ]
     },
@@ -43,7 +48,12 @@
         {
           "host": ["http://voting-service:8082"],
           "url_pattern": "/votes/{game_id}",
-          "method": "GET"
+          "method": "GET",
+          "extra_config": {
+            "github.com/devopsfaith/krakend/proxy": {
+              "querystring_params": ["game_id"]
+            }
+          }
         }
       ]
     }
@@ -66,11 +76,11 @@
       "empty_user_agent_is_bot": true
     },
     "telemetry/influx": {
-      "address": "${INFLUXDB_HOST}:${INFLUXDB_PORT}",
+      "address": "tcp://10.0.118.2:8086",
       "ttl": "25s",
       "buffer_size": 100,
-      "username": "${INFLUXDB_USER}",
-      "password": "${INFLUXDB_USER_PASSWORD}"
+      "username": "",
+      "password": ""
     },
     "security/cors": {
       "allow_origins": ["http://localhost:4200", "http://localhost:3000", "http://4.182.90.170.nip.io", "https://4.182.90.170.nip.io"],
