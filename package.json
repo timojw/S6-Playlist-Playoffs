@@ -3,16 +3,20 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test:e2e": "playwright test"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.45.0",
     "@types/node": "^20.14.8",
-    "nx": "19.3.1"
+    "nx": "19.3.1",
+    "typescript": "^5.5.2"
   },
   "dependencies": {
+    "@nx/playwright": "^19.3.2",
     "mongoose": "^8.4.4"
   }
 }
