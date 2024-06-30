@@ -17,7 +17,7 @@ RUN npm run build
 FROM nginx:alpine
 
 COPY --from=build /app/dist/login-demo /usr/share/nginx/html
-
+COPY services/web/playlist-playoffs/auth_config.json /usr/share/nginx/html/auth_config.json
 COPY services/web/playlist-playoffs/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
 
 # Copy TLS certificates for HTTPS
