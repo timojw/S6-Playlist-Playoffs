@@ -1,10 +1,10 @@
 {
   "domain": "dev-emkd7gpm4ah6eukc.us.auth0.com",
   "clientId": "YbD6JdS8z4wSimCGZp3B70ceevXIgroo",
-  "redirectUri": "https://4.182.99.127:3001/",
+  "redirectUri": "https://4.182.90.170.nip.io/",
   "apiUri": "https://4.182.90.170.nip.io/api/game/add",
   "errorPath": "/error",
   "authorizationParams": {
-    "audience": "https://4.182.90.170.nip.io/api/game/add"
+    "audience": "localhost:8080/api/game/add"
   }
 }
