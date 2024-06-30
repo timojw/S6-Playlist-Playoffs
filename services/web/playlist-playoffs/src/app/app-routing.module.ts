@@ -17,7 +17,7 @@ export const routes: Routes = [
   {
     path: 'start-game',
     component: CreateGameFormComponent,
-    // canActivate: [authGuardFn],
+    canActivate: [authGuardFn],
   },
   { path: 'game/:id',
     component: GameManagementComponent 
