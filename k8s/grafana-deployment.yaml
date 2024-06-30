@@ -22,14 +22,14 @@ spec:
     spec:
       containers:
         - env:
-            - name: INFLUXDB_HOST
-              value: $(INFLUXDB_HOST)
-            - name: INFLUXDB_PORT
-              value: $(INFLUXDB_PORT)
-            - name: INFLUXDB_USER
-              value: $(INFLUXDB_USER)
-            - name: INFLUXDB_USER_PASSWORD
-              value: $(INFLUXDB_USER_PASSWORD)
+          - name: GF_SERVER_ROOT_URL
+            value: "http://4.182.90.170.nip.io/grafana/"  # Ensure this matches your Ingress configuration
+          - name: GF_SERVER_SERVE_FROM_SUB_PATH
+            value: "true"
+          - name: GF_SECURITY_ADMIN_USER
+            value: "admin"  # Default admin user
+          - name: GF_SECURITY_ADMIN_PASSWORD
+            value: "admin"  # Default admin password; change as necessary
           image: grafana/grafana:latest
           imagePullPolicy: Always
           name: grafana

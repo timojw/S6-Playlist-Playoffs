@@ -27,9 +27,13 @@ spec:
                 configMapKeyRef:
                   key: KAFKA_BOOTSTRAP_SERVER
                   name: game-service-env
-          image: timojw/game:latest
+          image: timojw/game:f30c9019a9ad15d603cdaea5bc532e3a93453cf6
           name: game-service
           ports:
             - containerPort: 8082
               protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 512Mi
       restartPolicy: Always

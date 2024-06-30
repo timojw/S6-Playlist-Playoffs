@@ -22,14 +22,16 @@ spec:
     spec:
       containers:
         - env:
-            - name: INFLUXDB_ADMIN_PASSWORD
-              value: admin_password
             - name: INFLUXDB_ADMIN_USER
-              value: admin
+              value: "admin"
+            - name: INFLUXDB_ADMIN_PASSWORD
+              value: "password"
             - name: INFLUXDB_DB
-              value: krakend
+              value: "krakend"
             - name: INFLUXDB_USER
+              value: "user"
             - name: INFLUXDB_USER_PASSWORD
+              value: "password"
           image: influxdb:1.8.10
           name: influxdb
           ports:

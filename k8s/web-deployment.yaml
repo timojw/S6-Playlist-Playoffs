@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: timojw/web:7e313c2f5d6eb7ba989c0115bb1ecf9404ec6ed5
+        image: timojw/web:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
