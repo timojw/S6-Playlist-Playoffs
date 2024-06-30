@@ -49,7 +49,7 @@ jobs:
         service-name: [game, voting, krakend, grafana, web]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Azure CLI
         uses: azure/login@v1
