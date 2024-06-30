@@ -7,10 +7,10 @@ test('can login', async ({ page }) => {
 
   await page
     .getByLabel('Email address*')
-    .fill(process.env.PLAYWRIGHT_USER || '');
+    .fill("PLAYWRIGHT_USER@mail.com" || '');
   await page
     .getByLabel('Password*')
-    .fill(process.env.PLAYWRIGHT_PASSWORD || '');
+    .fill("PLAYWRIGHT_PASSWORD1" || '');
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect(page).toHaveURL('/');
 });
@@ -22,15 +22,14 @@ test('can logout', async ({ page }) => {
 
   await page
     .getByLabel('Email address*')
-    .fill(process.env.PLAYWRIGHT_USER || '');
+    .fill("PLAYWRIGHT_USER@mail.com" || '');
   await page
     .getByLabel('Password*')
-    .fill(process.env.PLAYWRIGHT_PASSWORD || '');
+    .fill("PLAYWRIGHT_PASSWORD1" || '');
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect(page).toHaveURL('/');
 
-  await page.getByRole('button').click();
-  await page.getByText('Logout').click();
+  await page.click('text=Log out');
 });
 
 test('can see game create page', async ({ page }) => {
@@ -40,10 +39,10 @@ test('can see game create page', async ({ page }) => {
 
   await page
     .getByLabel('Email address*')
-    .fill(process.env.PLAYWRIGHT_USER || '');
+    .fill("PLAYWRIGHT_USER@mail.com" || '');
   await page
     .getByLabel('Password*')
-    .fill(process.env.PLAYWRIGHT_PASSWORD || '');
+    .fill("PLAYWRIGHT_PASSWORD1" || '');
   await page.getByRole('button', { name: 'Continue', exact: true }).click();
   await expect(page).toHaveURL('/');
   await page.getByText('Create Game').click();
